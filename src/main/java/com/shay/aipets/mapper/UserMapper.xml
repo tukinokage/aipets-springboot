@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.chaterserver.mapper.UserMapper">
+    <resultMap type="com.example.chaterserver.entity.User" id="UserMapper">
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="userName" column="userName" jdbcType="VARCHAR"/>
+        <result property="headImg_url" column="headImg_url" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.chaterserver.entity.User">
+        insert into user(userName, userId, headImg_url, password)
+        values (#{userName}, #{userId}, #{headImg_url}, #{password} )
+    </insert>
+
+
+    <!--查询信息-单个-多个-全部-->
+    <select id="query"  parameterType="com.example.chaterserver.entity.User"  resultMap="UserMapper">
+        select
+          *
+        from user
+        <where>
+            <if test="userName != null">
+                and userName = #{userName}
+            </if>
+            <if test="userId != null and userId != ''">
+                and userId = #{userId}
+            </if>
+            <if test="password != password">
+                and password = #{password}
+            </if>
+        </where>
+    </select>
+
+    <!--查询数量-->
+    <select id="queryNum"  parameterType="com.example.chaterserver.entity.User"  resultType="java.lang.Integer">
+        select
+        count(*)
+        from user
+        <where>
+            <if test="userName != null">
+                and userName = #{userName}
+            </if>
+            <if test="userId != null ">
+                and userId = #{userId}
+            </if>
+            <if test="password != password">
+                and password = #{password}
+            </if>
+        </where>
+    </select>
+
+    <!-- useGeneratedKeys="true"生成主键  keyProperty="id"是Java对象的属性名id -->
+    
+<!--
+    &lt;!&ndash;通过主键修改数据&ndash;&gt;
+    <update id="update">
+        update mybatis.student
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+-->
+
+
+</mapper>
