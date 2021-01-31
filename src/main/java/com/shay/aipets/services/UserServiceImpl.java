@@ -1,14 +1,12 @@
 package com.shay.aipets.services;
 
-
-import com.alibaba.fastjson.JSONObject;
-import com.example.chaterserver.app.AuthorizationInterceptor;
-import com.example.chaterserver.entity.User;
-import com.example.chaterserver.mapper.UserMapper;
-import com.example.chaterserver.redisCache.RedisUtil;
-import com.example.chaterserver.util.MD5CodeCeator;
+import com.shay.aipets.app.AuthorizationInterceptor;
+import com.shay.aipets.dto.User;
+import com.shay.aipets.entity.responsedata.LoginResponseData;
 import com.shay.aipets.mapper.UserMapper;
+import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.redis.redisCache.RedisUtil;
+import com.shay.aipets.utils.MD5CodeCeator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,76 +23,45 @@ public class UserServiceImpl implements UserService {
      * */
 
     @Override
-    public JSONObject login(String name, String psw) {
+    public LoginResponseData login(String name, String psw) throws  Exception {
         String token = "";
+        LoginResponseData loginResponseData = null;
+        User quser = new User();
+        quser.setUserName(name);
+        quser.setPassWord(psw);
 
-        User user = new User();
-        user.setPassword(psw);
-        user.setUserName(name);
+        int nums = userMapper.queryNum(quser);
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("token", "");
-        jsonObject.put("userId", "");
-        try {
-            int nums = userMapper.queryNum(user);
+        if (nums > 0){
+            User resultUser = userMapper.query(quser).get(0);
+            //清除上次的token 记录
+            String id = resultUser.getUserId();
 
-            if (nums > 0){
-                User resultUser = userMapper.query(user).get(0);
-                //清除上次的token 记录
-                String oldToken = (String) redisUtil.get(name);
-                if (oldToken != null && !oldToken.equals("")){
-                    redisUtil.del(oldToken);
-                }
-
-                String rtoken = MD5CodeCeator.randomUUID();
-
-                Boolean a = redisUtil.set(rtoken, name, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
-                Boolean b = redisUtil.set(name, rtoken, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
-                if (a && b){
-                    token = rtoken;
-                    jsonObject.put("userId", resultUser.getUserId());
-                    jsonObject.put("token", token);
-                }
+            String oldToken = (String) redisUtil.get(id);
+            if (oldToken != null && !oldToken.equals("")){
+                redisUtil.del(oldToken);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            return jsonObject;
-        }
-    }
 
-    /**@return token str
-     *  AuthorizationInterceptor.TOKEN_EXPIRE_TIME 为默认缓存存活时间
-     * */
-    @Override
-    public JSONObject register(String name, String psw) {
-
-        String token = "";
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("token", "");
-        jsonObject.put("userId", "");
-
-        User user = new User();
-        user.setUserName(name);
-        user.setPassword(psw);
-        user.setUserId(MD5CodeCeator.randomUUID());
-
-        int result = userMapper.insert(user);
-        if(result > 0){
             String rtoken = MD5CodeCeator.randomUUID();
 
-            Boolean a = redisUtil.set(rtoken, name, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
-            Boolean b = redisUtil.set(name, rtoken, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+            //双向保存
+            Boolean a = redisUtil.set(rtoken, id, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+            Boolean b = redisUtil.set(id, rtoken, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
             if (a && b){
                 token = rtoken;
-                jsonObject.put("token", token);
-                jsonObject.put("userId", user.getUserId());
+                loginResponseData = new LoginResponseData();
+                loginResponseData.setToken(token);
+                loginResponseData.setUserId(id);
             }
+        }else {
+            //查询不到
+            throw new MyException("用户名或密码错误");
         }
 
-        return jsonObject;
+        return  loginResponseData ;
     }
+
+
 
     /**@return username str
      *         null为无结果
@@ -117,8 +84,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(String id) {
+    public User loginByPhoneToken(String phoneToken) throws Exception {
         return null;
+    }
+
+    @Override
+    public User regByPhoneToken(String phoneToken) throws Exception {
+        return null;
+    }
+
+    @Override
+    public boolean isPhoneRg(String phoneToken) throws Exception {
+        return false;
+    }
+
+    @Override
+    public String getPhoneToken(String phoneNum, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    public String sendMsg(String phoneNum) throws Exception {
+        return null;
+    }
+
+
+    @Override
+    public User getUserById(String id) {
+        User quser = new User();
+        quser.setUserId(id);
+        return ;
     }
 
     @Override

@@ -2,17 +2,23 @@ package com.shay.aipets.services;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.chaterserver.entity.User;
+import com.shay.aipets.dto.User;
+import com.shay.aipets.entity.responsedata.LoginResponseData;
+import com.shay.aipets.entity.responsedata.PhoneReponseData;
 
 public interface UserService {
-    JSONObject login(String name, String psw);
+    LoginResponseData login(String name, String psw) throws Exception;
+    LoginResponseData loginByToken(String token) throws Exception;
 
-    JSONObject register(String name, String psw);
+    User loginByPhoneToken(String phoneToken) throws Exception;
+    User regByPhoneToken(String phoneToken) throws Exception;
+    boolean isPhoneRg(String phoneToken) throws Exception;
+    String getPhoneToken(String phoneNum, String code) throws Exception;
 
-    String loginByToken(String token);
+    String sendMsg(String phoneNum) throws Exception;
+    User getUserById(String id) throws Exception;
+    User getUserByName(String name) throws Exception;
 
-    User getUserById(String id);
-    User getUserByName(String name);
-
-    boolean isExistUserByName(String name);
+    boolean isExistUserByName(String name) throws Exception;
 
 }

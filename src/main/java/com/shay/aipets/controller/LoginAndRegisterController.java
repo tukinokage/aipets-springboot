@@ -1,8 +1,12 @@
 package com.shay.aipets.controller;
 
-import com.shay.aipets.dto.User;
+
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.shay.aipets.entity.params.LoginParam;
 import com.shay.aipets.entity.response.BaseResponse;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
+import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Map;
+
 @Controller
-@RequestMapping("/ls")
+@RequestMapping("/usr")
 public class LoginAndRegisterController {
 
     @Autowired
@@ -20,39 +26,55 @@ public class LoginAndRegisterController {
 
     @RequestMapping(value = "/login")
     @ResponseBody
-    public BaseResponse<LoginResponseData> Login(@RequestParam(value = "name")String name, @RequestParam(value = "password") String password){
-        System.out.println(name + password);
+    /**
+     *
+     * */
+    public BaseResponse<LoginResponseData> Login(LoginParam loginParam){
+        System.out.println(loginParam.getName());
         BaseResponse<LoginResponseData> response = new BaseResponse<>();
-        //JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
-
-        try {
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-            response.setErrorMsg("服务器端处理出错");
+        LoginResponseData loginResponseData = new LoginResponseData();
+        response.setData(loginResponseData);
+        if(loginParam == null ){
+            response.setErrorMsg("服务没有请求数据");
+            return response;
         }
 
-        //return new Gson().toJson(response);
+        if (loginParam.getToken() == null){
+            try {
+                // String jsonString = JSONObject.toJSONString(params);
+                loginResponseData.setToken();
+            }catch (MyException e){
+                response.setErrorMsg(e.getMessage());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                response.setErrorMsg("服务器端处理出错");
+            }
+        }else {
+
+        }
+
+        //JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
+
+
         return response;
     }
 
 
-    /**@return username ""则失效;
+    /**@return ;
      * erroMsg为""、userName不为""为登陆成功
      *
     * */
         @RequestMapping(value = "/loginToken")
         @ResponseBody
-        public String Register(@RequestBody String json){
+        public BaseResponse<LoginResponseData> Register(@RequestParam String json){
             System.out.println(json);
-            JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
-            JSONObject resultJSONObject = new JSONObject();
-            resultJSONObject.put("errorMSg", "");
-            resultJSONObject.put("username", "");
 
-            String tokenStr =  jsonObject.getString("token");
-            String userName = userService.loginByToken(tokenStr);
+            BaseResponse<LoginResponseData> response = new BaseResponse<>();
+            LoginResponseData loginResponseData = new LoginResponseData();
+            response.setData(loginResponseData);
+
+
             if("".equals(userName) || userName == null){
                 resultJSONObject.put("errorMSg", "登陆过期，请重新登陆");
             }else {
