@@ -5,8 +5,17 @@ public class User {
     String userName;
     String passWord;
     String phoneNum;
+    String sign;
     int sex;
     String wbId;
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
 
     public String getUserId() {
         return userId;

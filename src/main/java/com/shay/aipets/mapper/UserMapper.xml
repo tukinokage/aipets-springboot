@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.chaterserver.mapper.UserMapper">
-    <resultMap type="com.example.chaterserver.entity.User" id="UserMapper">
+<mapper namespace="com.shay.aipets.mapper.UserMapper">
+    <resultMap type="com.shay.aipets.dto.User" id="UserMapper">
         <result property="userId" column="userId" jdbcType="VARCHAR"/>
         <result property="userName" column="userName" jdbcType="VARCHAR"/>
-        <result property="headImg_url" column="headImg_url" jdbcType="VARCHAR"/>
-        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="phoneNum" column="headImg_url" jdbcType="VARCHAR"/>
+        <result property="passWord" column="passWord" jdbcType="VARCHAR"/>
+        <result property="wbId" column="wbId" jdbcType="VARCHAR"/>
+        <result property="headImgName" column="headImgName" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
     </resultMap>
 
-    <insert id="insert" parameterType="com.example.chaterserver.entity.User">
-        insert into user(userName, userId, headImg_url, password)
+    <insert id="insert" parameterType="com.shay.aipets.dto.User">
+        insert into User(userName, userId, headImg_url, password)
         values (#{userName}, #{userId}, #{headImg_url}, #{password} )
     </insert>
 
 
     <!--查询信息-单个-多个-全部-->
-    <select id="query"  parameterType="com.example.chaterserver.entity.User"  resultMap="UserMapper">
+    <select id="query"  parameterType="com.shay.aipets.dto.User"  resultMap="UserMapper">
         select
           *
         from user
@@ -26,14 +29,42 @@
             <if test="userId != null and userId != ''">
                 and userId = #{userId}
             </if>
-            <if test="password != password">
-                and password = #{password}
+            <if test="passWord != passWord">
+                and passWord = #{passWord}
             </if>
         </where>
     </select>
 
+    <!--查询背景信息图片-单个名称-全部-->
+    <select id="getBackGroundName"  parameterType="com.shay.aipets.dto.Background"  resultType="java.lang.String">
+        select
+        bgImgName
+        from background
+        <where>
+
+            <if test="userId != null and userId != ''">
+                and userId = #{userId}
+            </if>
+
+        </where>
+    </select>
+
+    <!--查询头像信息图片-单个-多个-全部-->
+    <select id="getHeadImgName"  parameterType="com.shay.aipets.dto.HeadImg."  resultType="java.lang.String">
+        select
+        headImgName
+        from headimg
+        <where>
+
+            <if test="userId != null and userId != ''">
+                and userId = #{userId}
+            </if>
+
+        </where>
+    </select>
+
     <!--查询数量-->
-    <select id="queryNum"  parameterType="com.example.chaterserver.entity.User"  resultType="java.lang.Integer">
+    <select id="queryNum"  parameterType="com.shay.aipets.dto.User"  resultType="java.lang.Integer">
         select
         count(*)
         from user
@@ -44,8 +75,8 @@
             <if test="userId != null ">
                 and userId = #{userId}
             </if>
-            <if test="password != password">
-                and password = #{password}
+            <if test="passWord != passWord">
+                and passWord = #{passWord}
             </if>
         </where>
     </select>
@@ -53,20 +84,51 @@
     <!-- useGeneratedKeys="true"生成主键  keyProperty="id"是Java对象的属性名id -->
     
 <!--
-    &lt;!&ndash;通过主键修改数据&ndash;&gt;
-    <update id="update">
-        update mybatis.student
+    &lt;!&ndash;通过主键修改数据&ndash;&gt;-->
+    <update id="update" parameterType="com.shay.aipets.dto.User"  >
+        update user
         <set>
-            <if test="name != null and name != ''">
-                name = #{name},
+            <if test="userName != null and userName != ''">
+                userName = #{userName},
             </if>
-            <if test="age != null">
-                age = #{age},
+            <if test="passWord != null">
+                passWord = #{passWord},
+            </if>
+            <if test="sign != null">
+                sign = #{sign},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
             </if>
         </set>
-        where id = #{id}
+        where userId = #{userId}
     </update>
--->
+
+    <!--设置头像图片名字-->
+    <update id="setHeadImgName" parameterType="com.shay.aipets.dto.HeadImg"  >
+        update headimg
+        <set>
+
+            <if test="headImgName != null">
+                headImgName = #{headImgName},
+            </if>
+
+        </set>
+        where userId = #{userId}
+    </update>
+    <!--设置背景图片名字-->
+    <update id="setBackGroundName" parameterType="com.shay.aipets.dto.Background"  >
+        update background
+        <set>
+
+            <if test="bgImgName != null">
+                bgImgName = #{bgImgName},
+            </if>
+
+        </set>
+        where userId = #{userId}
+    </update>
+
 
 
 </mapper>

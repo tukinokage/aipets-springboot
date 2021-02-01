@@ -1,14 +1,20 @@
 package com.shay.aipets.services;
 
 import com.shay.aipets.app.AuthorizationInterceptor;
+import com.shay.aipets.dto.Background;
+import com.shay.aipets.dto.HeadImg;
 import com.shay.aipets.dto.User;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
 import com.shay.aipets.mapper.UserMapper;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.redis.redisCache.RedisUtil;
 import com.shay.aipets.utils.MD5CodeCeator;
+import com.shay.aipets.utils.TextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Random;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -63,62 +69,128 @@ public class UserServiceImpl implements UserService {
 
 
 
-    /**@return username str
-     *         null为无结果
+    /**@return userid str
      *  AuthorizationInterceptor.TOKEN_EXPIRE_TIME 为默认缓存存活时间
      * */
     @Override
-    public String loginByToken(String token) {
+    public String getIdByToken(String token) throws Exception{
         if ("".equals(token) || token == null){
-            return null;
+            throw new MyException("token错误");
         }
 
         //如果 key 不存在时，返回 null
-        String result = (String) redisUtil.get(token);
+        String id = (String) redisUtil.get(token);
         //更新存活时间
-        if(result != null){
+        if(id != null){
             redisUtil.expire(token,  AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
-            redisUtil.expire(result, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+            redisUtil.expire(id, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
         }
-        return result;
+        return id;
     }
 
+    /**
+     * @Describe 通过验证码生成的phonetoken获取redis中的 phonenum
+     * @Return phoneNum str
+     * */
     @Override
-    public User loginByPhoneToken(String phoneToken) throws Exception {
-        return null;
+    public String getPhoneByPhoneToken(String phoneToken) throws Exception {
+        if(TextUtil.isEmpty(phoneToken)){
+            throw new MyException("错误号码数据");
+        }
+
+        String phone = (String) redisUtil.get(phoneToken);
+        return phone;
     }
 
+    /**使用phonenum注册新用户，密码随机生成 ，用户名随机生成
+     * @return 注册后的用户*/
     @Override
-    public User regByPhoneToken(String phoneToken) throws Exception {
-        return null;
+    public User regByPhone(String phonenum) throws Exception {
+        User ruser = new User();
+        ruser.setPhoneNum(phonenum);
+        ruser.setUserName("用户" + phonenum);
+        ruser.setPassWord(MD5CodeCeator.randomUUID16());
+        ruser.setSex(0);
+        ruser.setUserId(MD5CodeCeator.randomUUID16());
+        int insert = userMapper.insert(ruser);
+        if(insert > 0){
+            return ruser;
+        }else {
+            throw new MyException("服务器数据错误");
+        }
     }
 
+    /**
+     * 检查phone是否已经注册*/
     @Override
-    public boolean isPhoneRg(String phoneToken) throws Exception {
+    public boolean isPhoneRg(String phone) throws Exception {
+        User quser = new User();
+        quser.setPhoneNum(phone);
+        int num = userMapper.queryNum(quser);
+        if(num > 0){
+            return true;
+        }
         return false;
     }
 
+    /**
+     *验证输入的手机号码和 验证码匹配
+     * 匹配就生成手机令牌用于识别用户
+     *
+     * @Return phonetoken str
+     * */
     @Override
     public String getPhoneToken(String phoneNum, String code) throws Exception {
-        return null;
+        String rcode = (String) redisUtil.get(phoneNum);
+        if(code.equals(rcode)){
+            String phoneToken = MD5CodeCeator.randomUUID16();
+            redisUtil.set(phoneToken, phoneNum, AuthorizationInterceptor.PHONE_TOKEN_EXPIRE_TIME);
+            return phoneToken;
+        }else {
+            throw new MyException("验证码错误");
+        }
+
+
     }
 
+    /***
+     * 向目标手机发送验证码，并生成缓存phonenum和code，用于验证
+     *
+     * */
     @Override
-    public String sendMsg(String phoneNum) throws Exception {
-        return null;
+    public void sendMsg(String phoneNum) throws Exception {
+        Random random = new Random();
+        int codeInt = random.nextInt(8999) + 1000;
+        //request params
+        String code = String.valueOf(codeInt);
+
+        redisUtil.set(phoneNum, code, AuthorizationInterceptor.PHONE_TOKEN_EXPIRE_TIME);
     }
 
 
     @Override
-    public User getUserById(String id) {
+    public User getUserById(String id) throws MyException {
         User quser = new User();
         quser.setUserId(id);
-        return ;
+        List<User>  users= userMapper.query(quser);
+        User user = users.get(0);
+
+        if(user == null){
+            throw new MyException("用户不存在");
+        }
+        return user;
     }
 
     @Override
-    public User getUserByName(String name) {
-        return null;
+    public User getUserByName(String name) throws Exception{
+        User quser  = new User();
+        List<User>  users= userMapper.query(quser);
+        User user = users.get(0);
+        if(user == null){
+            throw new MyException("用户不存在");
+        }
+
+        return user;
     }
 
     @Override
@@ -131,7 +203,53 @@ public class UserServiceImpl implements UserService {
         }else {
             return false;
         }
-
     }
+
+    /***
+     *
+     * 通过id修改信息*/
+    @Override
+    public boolean updateInfoById(User updaterInfo) throws Exception {
+        if(userMapper.update(updaterInfo)){
+            return true;
+        }
+            return false;
+    }
+
+    @Override
+    public boolean updateHeadImg(String userIdString, String headImgName) throws Exception {
+        HeadImg headImg = new HeadImg();
+        headImg.setUserId(userIdString);
+        headImg.setHeadImgName(headImgName);
+        boolean b = userMapper.setHeadImgName(headImg);
+        return b;
+    }
+
+    @Override
+    public boolean updateBgImg(String userIdString, String bgImgName) throws Exception {
+        Background background = new Background();
+        background.setUserId(userIdString);
+        background.setBgImgName(bgImgName);
+        boolean b = userMapper.setBackGroundName(background);
+        return b;
+    }
+
+
+    @Override
+    public String getHeadImgName(String userId) throws Exception {
+        HeadImg headImg = new HeadImg();
+        headImg.setUserId(userId);
+        String s = userMapper.getHeadImgName(headImg);
+        return s;
+    }
+
+    @Override
+    public String getBgImgName(String userId) throws Exception {
+        Background background = new Background();
+        background.setUserId(userId);
+        String s = userMapper.getBackGroundName(background);
+        return s;
+    }
+
 
 }
