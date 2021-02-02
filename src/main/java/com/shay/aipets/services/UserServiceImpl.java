@@ -4,6 +4,7 @@ import com.shay.aipets.app.AuthorizationInterceptor;
 import com.shay.aipets.dto.Background;
 import com.shay.aipets.dto.HeadImg;
 import com.shay.aipets.dto.User;
+import com.shay.aipets.entity.responsedata.CheckPhoneRepData;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
 import com.shay.aipets.mapper.UserMapper;
 import com.shay.aipets.myexceptions.MyException;
@@ -78,12 +79,14 @@ public class UserServiceImpl implements UserService {
             throw new MyException("token错误");
         }
 
-        //如果 key 不存在时，返回 null
+        //如果 key 不存在时，id = null
         String id = (String) redisUtil.get(token);
         //更新存活时间
         if(id != null){
             redisUtil.expire(token,  AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
             redisUtil.expire(id, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+        }else {
+            throw new MyException("登录失效");
         }
         return id;
     }
@@ -99,25 +102,78 @@ public class UserServiceImpl implements UserService {
         }
 
         String phone = (String) redisUtil.get(phoneToken);
-        return phone;
+        if(TextUtil.isEmpty(phone)){
+            throw new MyException("操作失效");
+        }else {
+            return phone;
+        }
     }
 
     /**使用phonenum注册新用户，密码随机生成 ，用户名随机生成
      * @return 注册后的用户*/
     @Override
-    public User regByPhone(String phonenum) throws Exception {
+    public CheckPhoneRepData regByPhone(String phonenum) throws Exception {
         User ruser = new User();
         ruser.setPhoneNum(phonenum);
         ruser.setUserName("用户" + phonenum);
         ruser.setPassWord(MD5CodeCeator.randomUUID16());
         ruser.setSex(0);
         ruser.setUserId(MD5CodeCeator.randomUUID16());
+        String token = MD5CodeCeator.randomUUID();
+        //双向保存
+
         int insert = userMapper.insert(ruser);
         if(insert > 0){
-            return ruser;
+            Boolean a = redisUtil.set(token, ruser.getUserId(), AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+            Boolean b = redisUtil.set(ruser.getUserId(), token, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+
+            CheckPhoneRepData checkPhoneRepData = new CheckPhoneRepData();
+            checkPhoneRepData.setUserType(0);
+            checkPhoneRepData.setUserName(ruser.getUserName());
+            checkPhoneRepData.setUserId(ruser.getUserId());
+            checkPhoneRepData.setToken(token);
+            return checkPhoneRepData;
         }else {
             throw new MyException("服务器数据错误");
         }
+    }
+
+    @Override
+    public CheckPhoneRepData getUserByPhone(String phonenum) throws Exception {
+        User quser = new User();
+        quser.setPhoneNum(phonenum);
+
+        int nums = userMapper.queryNum(quser);
+        CheckPhoneRepData checkPhoneRepData = null;
+        if (nums > 0){
+            User resultUser = userMapper.query(quser).get(0);
+
+            //清除上次的token 键记录
+            String id = resultUser.getUserId();
+
+            String oldToken = (String) redisUtil.get(id);
+            if (oldToken != null && !oldToken.equals("")){
+                redisUtil.del(oldToken);
+            }
+
+            String rtoken = MD5CodeCeator.randomUUID();
+
+            //双向保存
+            Boolean a = redisUtil.set(rtoken, id, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+            Boolean b = redisUtil.set(id, rtoken, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+            if (a && b){
+                checkPhoneRepData = new CheckPhoneRepData();
+                checkPhoneRepData.setToken(rtoken);
+                checkPhoneRepData.setUserId(id);
+                checkPhoneRepData.setUserName(resultUser.getUserName());
+                checkPhoneRepData.setUserType(1);
+            }
+        }else {
+            //查询不到
+            throw new MyException("号码获取用户信息错误");
+        }
+
+        return checkPhoneRepData;
     }
 
     /**
@@ -149,7 +205,6 @@ public class UserServiceImpl implements UserService {
         }else {
             throw new MyException("验证码错误");
         }
-
 
     }
 

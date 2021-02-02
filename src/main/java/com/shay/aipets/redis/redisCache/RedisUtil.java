@@ -1,6 +1,6 @@
 package com.shay.aipets.redis.redisCache;
 
-import com.example.chaterserver.enums.timeenum.Status;
+import com.shay.aipets.enums.timeenum.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
