@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shay.aipets.mapper.UserMapper">
-    <resultMap type="com.shay.aipets.dto.User" id="UserMapper">
+    <resultMap type="com.shay.aipets.dto.User" id="UserMap">
         <result property="userId" column="userId" jdbcType="VARCHAR"/>
         <result property="userName" column="userName" jdbcType="VARCHAR"/>
-        <result property="phoneNum" column="headImg_url" jdbcType="VARCHAR"/>
+        <result property="phoneNum" column="phoneNum" jdbcType="VARCHAR"/>
         <result property="passWord" column="passWord" jdbcType="VARCHAR"/>
         <result property="wbId" column="wbId" jdbcType="VARCHAR"/>
         <result property="headImgName" column="headImgName" jdbcType="VARCHAR"/>
@@ -12,13 +12,13 @@
     </resultMap>
 
     <insert id="insert" parameterType="com.shay.aipets.dto.User">
-        insert into User(userName, userId, headImg_url, password)
-        values (#{userName}, #{userId}, #{headImg_url}, #{password} )
+        insert into User(userName, userId, sex , passWord, wbId, phoneNum)
+        values (#{userName}, #{userId}, #{sex}, #{passWord} , #{wbId}, #{phoneNum})
     </insert>
 
 
     <!--查询信息-单个-多个-全部-->
-    <select id="query"  parameterType="com.shay.aipets.dto.User"  resultMap="UserMapper">
+    <select id="query"  parameterType="com.shay.aipets.dto.User"  resultMap="UserMap">
         select
           *
         from user
@@ -50,7 +50,7 @@
     </select>
 
     <!--查询头像信息图片-单个-多个-全部-->
-    <select id="getHeadImgName"  parameterType="com.shay.aipets.dto.HeadImg."  resultType="java.lang.String">
+    <select id="getHeadImgName"  parameterType="com.shay.aipets.dto.HeadImg"  resultType="java.lang.String">
         select
         headImgName
         from headimg
@@ -66,7 +66,7 @@
     <!--查询数量-->
     <select id="queryNum"  parameterType="com.shay.aipets.dto.User"  resultType="java.lang.Integer">
         select
-        count(*)
+            count(*)
         from user
         <where>
             <if test="userName != null">
@@ -83,8 +83,7 @@
 
     <!-- useGeneratedKeys="true"生成主键  keyProperty="id"是Java对象的属性名id -->
     
-<!--
-    &lt;!&ndash;通过主键修改数据&ndash;&gt;-->
+<!--&lt;!&ndash;通过主键修改数据&ndash;&gt;-->
     <update id="update" parameterType="com.shay.aipets.dto.User"  >
         update user
         <set>

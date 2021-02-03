@@ -1,7 +1,7 @@
 package com.shay.aipets.entity.result;
 
-import com.shay.baselibrary.dto.Pet;
-import com.shay.baselibrary.dto.UserDailyRecordItem;
+
+import com.shay.aipets.entity.UserDailyRecordItem;
 
 import java.util.List;
 

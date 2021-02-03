@@ -4,7 +4,6 @@ import com.shay.aipets.dto.Background;
 import com.shay.aipets.dto.HeadImg;
 import com.shay.aipets.dto.User;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 

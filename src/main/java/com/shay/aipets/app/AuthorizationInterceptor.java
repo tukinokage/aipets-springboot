@@ -1,6 +1,7 @@
 package com.shay.aipets.app;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shay.aipets.annotations.AuthToken;
 import com.shay.aipets.redis.redisCache.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

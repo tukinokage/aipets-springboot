@@ -8,7 +8,6 @@ import com.shay.aipets.entity.params.UpdateUserInfoParam;
 import com.shay.aipets.entity.response.BaseResponse;
 import com.shay.aipets.entity.responsedata.CheckPhoneRepData;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
-import com.shay.aipets.entity.responsedata.PhoneReponseData;
 import com.shay.aipets.entity.responsedata.SetPwResponseData;
 import com.shay.aipets.entity.responses.UpdateUserInfoResponse;
 import com.shay.aipets.myexceptions.MyException;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 
 @Controller
 @RequestMapping("/usr")
@@ -32,7 +30,7 @@ public class LoginAndRegisterController {
      *
      * */
     public BaseResponse<LoginResponseData> Login(LoginParam loginParam){
-        System.out.println(loginParam.getName());
+        System.out.println(loginParam.getUserName());
         BaseResponse<LoginResponseData> response = new BaseResponse<>();
         LoginResponseData loginResponseData = new LoginResponseData();
 
@@ -43,7 +41,7 @@ public class LoginAndRegisterController {
 
             try {
                 if (loginParam.getToken() == null){
-                    loginResponseData = userService.login(loginParam.getName(), loginParam.getPassword());
+                    loginResponseData = userService.login(loginParam.getUserName(), loginParam.getPassWord());
                     response.setData(loginResponseData);
                 }else {
                     String userId = userService.getIdByToken(loginResponseData.getToken());

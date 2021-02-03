@@ -1,7 +1,5 @@
 package com.shay.aipets.enums;
 
-import com.shay.baselibrary.enums.UIFilterParams.RankTypeEnum;
-
 public enum PostTypeEnum {
     all(0,"全部"),
     communication(1, "交流"),

@@ -1,6 +1,6 @@
 package com.shay.aipets.entity.result;
 
-import com.shay.baselibrary.dto.UserInfo;
+import com.shay.aipets.entity.UserInfo;
 
 public class GetUserResult {
     private String errorMsg = "";

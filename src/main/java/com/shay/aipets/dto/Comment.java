@@ -1,4 +1,4 @@
-package com.shay.aipets.entity;
+package com.shay.aipets.dto;
 
 import java.io.Serializable;
 import java.util.List;

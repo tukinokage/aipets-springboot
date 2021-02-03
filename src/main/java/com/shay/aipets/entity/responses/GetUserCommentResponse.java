@@ -1,6 +1,6 @@
 package com.shay.aipets.entity.responses;
 
-import com.shay.baselibrary.dto.UserCommentItem;
+import com.shay.aipets.entity.UserCommentItem;
 
 import java.util.List;
 

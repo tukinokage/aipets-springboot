@@ -12,11 +12,13 @@ import com.shay.aipets.redis.redisCache.RedisUtil;
 import com.shay.aipets.utils.MD5CodeCeator;
 import com.shay.aipets.utils.TextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
 
+@Component
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
                 loginResponseData = new LoginResponseData();
                 loginResponseData.setToken(token);
                 loginResponseData.setUserId(id);
+                loginResponseData.setUserName(resultUser.getUserName());
             }
         }else {
             //查询不到

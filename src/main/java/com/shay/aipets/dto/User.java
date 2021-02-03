@@ -9,6 +9,21 @@ public class User {
     int sex;
     String wbId;
 
+    public User() {
+    }
+
+    public User(String userId, String userName, String passWord, String phoneNum, String sign, int sex, String wbId) {
+        this.userId = userId;
+        this.userName = userName;
+        this.passWord = passWord;
+        this.phoneNum = phoneNum;
+        this.sign = sign;
+        this.sex = sex;
+        this.wbId = wbId;
+    }
+
+
+
     public String getSign() {
         return sign;
     }

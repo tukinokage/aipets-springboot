@@ -1,6 +1,8 @@
 package com.shay.aipets.entity.result;
 
-import com.shay.baselibrary.dto.Pet;
+
+
+import com.shay.aipets.dto.Pet;
 
 import java.util.List;
 

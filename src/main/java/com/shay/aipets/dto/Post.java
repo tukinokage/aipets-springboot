@@ -1,16 +1,14 @@
-package com.shay.aipets.entity;
+package com.shay.aipets.dto;
 
 import java.util.List;
-/**用于返回数据格式*/
+
 public class Post {
     String postId;
     String userId;
-    String userName;
     String title;
     String contextText;
     String dateTime;
     int type;
-    List<String> picNameList;
 
     public String getUserId() {
         return userId;
@@ -18,22 +16,6 @@ public class Post {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public List<String> getPicNameList() {
-        return picNameList;
-    }
-
-    public void setPicNameList(List<String> picNameList) {
-        this.picNameList = picNameList;
     }
 
     public String getPostId() {

@@ -1,9 +1,6 @@
 package com.shay.aipets.entity.result;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 
-import com.shay.baselibrary.dto.Result;
 
 import java.io.Serializable;
 

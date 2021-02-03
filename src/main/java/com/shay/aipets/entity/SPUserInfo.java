@@ -28,5 +28,4 @@ public class SPUserInfo {
         this.userName = userName;
     }
 
-
 }

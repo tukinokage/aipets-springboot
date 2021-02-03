@@ -4,6 +4,14 @@ public class Background {
     String userId;
     String bgImgName;
 
+    public Background(String userId, String bgImgName) {
+        this.userId = userId;
+        this.bgImgName = bgImgName;
+    }
+
+    public Background() {
+    }
+
     public String getUserId() {
         return userId;
     }

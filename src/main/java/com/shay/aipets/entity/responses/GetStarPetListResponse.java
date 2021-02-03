@@ -1,7 +1,6 @@
 package com.shay.aipets.entity.responses;
 
-import com.shay.baselibrary.dto.Pet;
-
+import com.shay.aipets.dto.Pet;
 import java.util.List;
 
 public class GetStarPetListResponse {

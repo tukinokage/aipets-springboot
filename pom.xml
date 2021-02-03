@@ -83,6 +83,23 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/java</directory><!--所在的目录-->
+                <includes><!--包括目录下的.properties,.xml文件都会扫描到-->
+                    <include>**/*.properties</include>
+                    <!--改变mapper.xml从resource目录到mapper目录下-->
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
     </build>
+
 
 </project>
