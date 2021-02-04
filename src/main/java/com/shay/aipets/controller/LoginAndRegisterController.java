@@ -12,6 +12,7 @@ import com.shay.aipets.entity.responsedata.SetPwResponseData;
 import com.shay.aipets.entity.responses.UpdateUserInfoResponse;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.services.UserService;
+import com.shay.aipets.utils.CloopenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -141,8 +142,8 @@ public class LoginAndRegisterController {
      *
     * */
     @ResponseBody
-    @RequestMapping(value = "/loginByPhone")
-    public BaseResponse<CheckPhoneRepData> loginByPhone(CheckPhExistParam checkPhExistParam){
+    @RequestMapping(value = "/checkPhone")
+    public BaseResponse<CheckPhoneRepData> checkPhone(CheckPhExistParam checkPhExistParam){
         BaseResponse<CheckPhoneRepData> response = new BaseResponse<>();
         CheckPhoneRepData checkPhoneRepData = new CheckPhoneRepData();
         try {
@@ -155,11 +156,20 @@ public class LoginAndRegisterController {
         }catch (MyException e){
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             response.setData(checkPhoneRepData);
             return response;
         }
+    }
+
+     @ResponseBody
+    @RequestMapping(value = "/test")
+    public BaseResponse<CheckPhoneRepData> loginByPhone(){
+         CloopenUtil cloopen = new CloopenUtil();
+         cloopen.send("13049254754", "2233", "1");
+         return new BaseResponse();
     }
 
 

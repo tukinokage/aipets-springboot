@@ -1,6 +1,8 @@
 package com.shay.aipets.entity.params;
 
-public class SendMsgParam {
+import java.io.Serializable;
+
+public class SendMsgParam implements Serializable {
     String phoneNum;
 
     public String getPhoneNum() {

@@ -29,8 +29,12 @@
             <if test="userId != null and userId != ''">
                 and userId = #{userId}
             </if>
-            <if test="passWord != passWord">
+            <if test="passWord != null">
                 and passWord = #{passWord}
+            </if>
+
+            <if test="phoneNum != null">
+                and phoneNum = #{phoneNum}
             </if>
         </where>
     </select>
@@ -75,8 +79,11 @@
             <if test="userId != null ">
                 and userId = #{userId}
             </if>
-            <if test="passWord != passWord">
+            <if test="passWord != null">
                 and passWord = #{passWord}
+            </if>
+            <if test="phoneNum != null">
+                and phoneNum = #{phoneNum}
             </if>
         </where>
     </select>

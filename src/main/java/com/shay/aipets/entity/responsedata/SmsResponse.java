@@ -1,5 +1,7 @@
 package com.shay.aipets.entity.responsedata;
 
-public class SmsResponse {
+import java.io.Serializable;
+
+public class SmsResponse implements Serializable {
 
 }

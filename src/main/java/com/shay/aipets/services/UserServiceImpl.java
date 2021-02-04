@@ -9,12 +9,12 @@ import com.shay.aipets.entity.responsedata.LoginResponseData;
 import com.shay.aipets.mapper.UserMapper;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.redis.redisCache.RedisUtil;
+import com.shay.aipets.utils.CloopenUtil;
 import com.shay.aipets.utils.MD5CodeCeator;
 import com.shay.aipets.utils.TextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Random;
 
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         String id = (String) redisUtil.get(token);
         //更新存活时间
         if(id != null){
-            redisUtil.expire(token,  AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+            redisUtil.expire(token, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
             redisUtil.expire(id, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
         }else {
             throw new MyException("登录失效");
@@ -221,7 +221,7 @@ public class UserServiceImpl implements UserService {
         int codeInt = random.nextInt(8999) + 1000;
         //request params
         String code = String.valueOf(codeInt);
-
+        CloopenUtil.send(phoneNum, code, "1");
         redisUtil.set(phoneNum, code, AuthorizationInterceptor.PHONE_TOKEN_EXPIRE_TIME);
     }
 
