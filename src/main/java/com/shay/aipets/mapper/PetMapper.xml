@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shay.aipets.mapper.PetMapper">
+    <resultMap type="com.shay.aipets.dto.Pet" id="PetMap">
+        <result property="petId" column="petId" jdbcType="VARCHAR"/>
+        <result property="petName" column="userName" jdbcType="VARCHAR"/>
+        <result property="petEnglishName" column="petEnglishName" jdbcType="VARCHAR"/>
+        <result property="femaleWeight" column="femaleWeight" jdbcType="VARCHAR"/>
+        <result property="maleWeight" column="maleWeight" jdbcType="VARCHAR"/>
+        <result property="originPlace" column="originPlace" jdbcType="VARCHAR"/>
+        <result property="petHeadImg" column="petHeadImg" jdbcType="VARCHAR"/>
+        <result property="fetchLevel" column="fetchLevel" jdbcType="INTEGER"/>
+        <result property="shapeLevel" column="shapeLevel" jdbcType="INTEGER"/>
+        <result property="petClass" column="petClass" jdbcType="INTEGER"/>
+        <result property="viewNum" column="viewNum" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.shay.aipets.entity.Store" id="StoreMap">
+        <result property="petId" column="petId" jdbcType="VARCHAR"/>
+        <result property="petName" column="userName" jdbcType="VARCHAR"/>
+        <result property="petEnglishName" column="petEnglishName" jdbcType="VARCHAR"/>
+        <result property="femaleWeight" column="femaleWeight" jdbcType="VARCHAR"/>
+        <result property="maleWeight" column="maleWeight" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询信息-单个-多个-全部-->
+    <select id="query"  parameterType="com.shay.aipets.dto.Pet"  resultMap="PetMap">
+        select
+          *
+        from pet
+        <where>
+            <if test="petId != null">
+                and petId = #{petId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryIdByLimit"   resultType="java.lang.String">
+        select
+          *
+        from pet
+        limit #{start},#{end}
+    </select>
+
+    <select id="queryAllPetNum"   resultType="java.lang.Integer">
+        select
+          count(*)
+        from pet
+    </select>
+
+    <!-- 条件分页查询信息-多个-->
+    <select id="queryByRank" parameterType="com.shay.aipets.entity.SelectPetCondition" resultMap="PetMap">
+
+        select a.petId, petName, petEnglishName, petHeadImg, femaleWeight, maleWeight, originPlace, fetchLevel, petClass,
+               shapeLevel,viewNum
+        from (select * from pet
+        <where>
+            <if test="shapeLevel != null and shapeLevel != ''">
+                <if test="shapeLevel == 0">
+                    and pet.shapeLevel = #{shapeLevel}
+                </if>
+            </if>
+            <if test="fetchLevel != null and fetchLevel != ''">
+                <if test="fetchLevel == 0">
+                    and pet.fetchLevel = #{fetchLevel}
+                </if>
+            </if>
+            <if test="petClass != null and petClass != ''">
+                <if test="petClass == 0">
+                    and pet.petClass = #{petClass}
+                </if>
+            </if>
+        </where>
+            ) as a
+            inner join (
+                select b.petId, sum(b.viewNum)as viewNum
+                from (select * from petdayviewnum
+                <where>
+                    <if test=" rankType == 1">
+                        stime = #{currentDay}
+                    </if>
+                    <if test=" rankType == 2">
+                        stime > DATE_SUB(#{currentDay}, interval 7 day)
+                    </if>
+                    <if test=" rankType == 3">
+                        stime > DATE_SUB(#{currentDay}, interval 30 day)
+                    </if>
+                    <if test=" rankType == 4">
+                        stime > DATE_SUB(#{currentDay}, interval 360 day)
+                    </if>
+                </where>
+                    )as b
+                group by petId) as c
+             on a.petId = c.petId
+        group by a.petId
+        limit #{startNum}, #{endNum}
+    </select>
+
+
+    <select id="queryByNoneRank" parameterType="com.shay.aipets.entity.SelectPetCondition" resultMap="PetMap">
+
+        select petId, petName, petEnglishName, petHeadImg, femaleWeight, maleWeight, originPlace, fetchLevel, petClass,
+               shapeLevel
+        from (select * from pet
+        <where>
+            <if test="shapeLevel != null and shapeLevel != ''">
+                <if test="shapeLevel == 0">
+                    and pet.shapeLevel = #{shapeLevel}
+                </if>
+            </if>
+            <if test="fetchLevel != null and fetchLevel != ''">
+                <if test="fetchLevel == 0">
+                    and pet.fetchLevel = #{fetchLevel}
+                </if>
+            </if>
+            <if test="petClass != null and petClass != ''">
+                <if test="petClass == 0">
+                    and pet.petClass = #{petClass}
+                </if>
+            </if>
+        </where>
+        limit #{startNum}, #{endNum}
+    </select>
+
+    <!--查询信息图片-单个名称-全部-->
+    <select id="getPetPic"  parameterType="com.shay.aipets.dto.Background"  resultType="java.lang.String">
+        select
+        bgImgName
+        from background
+        <where>
+            <if test="userId != null and userId != ''">
+                and userId = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!--查询头像信息图片-单个-多个-全部-->
+    <select id="getPetIntroduce"  parameterType="com.shay.aipets.dto.Pet"  resultType="java.lang.String">
+        select
+        *
+        from petintroduce
+        <where>
+            <if test="petId != null and petId != ''">
+                and petId = #{petId}
+            </if>
+
+        </where>
+    </select>
+
+    <!--查询头像信息图片-单个-多个-全部-->
+    <select id="getPetHospital"  parameterType="com.shay.aipets.dto.Pet"  resultMap="">
+        select
+        *
+        from hospital
+        <where>
+
+            <if test="petId != null and petId != ''">
+                and petId = #{petId}
+            </if>
+
+        </where>
+    </select>
+
+    !--查询头像信息图片-单个-多个-全部-->
+    <select id="getPetStore"  parameterType="com.shay.aipets.dto.Pet"  resultMap="">
+        select
+        *
+        from store
+        <where>
+            <if test="petId != null and petId != ''">
+                and petId = #{petId}
+            </if>
+
+        </where>
+
+    </select>
+    <!--查询是否存在数量统计记录数-->
+    <select id="countDateViewColumn"  resultType="java.lang.Integer">
+        select count(*) from petdayviewnum
+        <where>
+            <if test=" rankType == 1">
+                stime = #{currentDay}
+            </if>
+            <if test=" rankType == 2">
+                stime > DATE_SUB(#{currentDay}, interval 7 day)
+            </if>
+            <if test=" rankType == 3">
+                stime > DATE_SUB(#{currentDay}, interval 30 day)
+            </if>
+            <if test=" rankType == 4">
+                stime > DATE_SUB(#{currentDay}, interval 360 day)
+            </if>
+            <if test=" petId != null">
+                and petId = #{petId}
+            </if>
+        </where>
+
+    </select>
+
+    <insert id="insertDateViewNum"  parameterType="com.shay.aipets.dto.PetDayViewNum" >
+        insert into  petdayviewnum(petId, stime, viewNum)
+        values (#{petId}, #{stime}, #{viewNum} )
+    </insert>
+
+    <update id="updateDateViewNum" parameterType="com.shay.aipets.dto.PetDayViewNum"  >
+        update petdayviewnum set viewNum = #{viewNum} where petId = #{petId} and stime = #{stime};
+    </update>
+
+    <select id="selectDateViewNum" parameterType="com.shay.aipets.dto.PetDayViewNum"  resultType="java.lang.Integer">
+        select viewNum from petdayviewnum where petId = #{petId} and stime = #{stime};
+    </select>
+
+
+</mapper>
