@@ -27,4 +27,8 @@ public interface UserService {
     String getHeadImgName(String userId) throws Exception;
     String getBgImgName(String userId) throws Exception;
 
+    boolean isStarPet(String petId, String userId) throws Exception;
+    boolean starPet(String petId, String userId) throws Exception;
+    boolean unStarPet(String petId, String userId) throws Exception;
+
 }

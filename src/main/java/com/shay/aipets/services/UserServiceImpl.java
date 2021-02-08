@@ -15,6 +15,8 @@ import com.shay.aipets.utils.TextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import javax.xml.soap.Text;
 import java.util.List;
 import java.util.Random;
 
@@ -307,6 +309,34 @@ public class UserServiceImpl implements UserService {
         background.setUserId(userId);
         String s = userMapper.getBackGroundName(background);
         return s;
+    }
+
+    @Override
+    public boolean isStarPet(String petId, String userId) throws Exception {
+
+        if(TextUtil.isEmpty(petId)){
+            throw new MyException("参数错误");
+        }
+
+        int i = userMapper.queryStarPetNum(petId, userId);
+        if(i > 0){
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean starPet(String petId, String userId) throws Exception {
+        boolean b = userMapper.starPet( petId, userId);
+        return b;
+    }
+
+    @Override
+    public boolean unStarPet(String petId, String userId) throws Exception {
+        boolean b = userMapper.unStarPet(petId, userId);
+        return b;
     }
 
 

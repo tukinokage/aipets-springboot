@@ -4,6 +4,7 @@ import com.shay.aipets.dto.Background;
 import com.shay.aipets.dto.HeadImg;
 import com.shay.aipets.dto.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface UserMapper {
     boolean setHeadImgName(HeadImg headImg);
     String getBackGroundName(Background background);
     boolean setBackGroundName(Background background);
+
+    int queryStarPetNum(@Param("userId") String userId, @Param("petId") String petId);
+    boolean starPet(@Param("userId") String userId, @Param("petId") String petId);
+    boolean unStarPet(@Param("userId") String userId, @Param("petId") String petId);
 }

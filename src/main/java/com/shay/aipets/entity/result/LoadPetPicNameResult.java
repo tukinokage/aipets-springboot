@@ -1,5 +1,6 @@
 package com.shay.aipets.entity.result;
 
+
 import org.apache.http.util.TextUtils;
 
 import java.util.List;

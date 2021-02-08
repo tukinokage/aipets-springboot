@@ -135,6 +135,20 @@
         where userId = #{userId}
     </update>
 
+    <select id="queryStarPetNum" resultType="java.lang.Integer"  >
+        select count(*)
+        from starpet
+
+        where userId = #{userId} and petId = #{petId}
+    </select>
+
+    <insert id="starPet" >
+        insert into starpet(userId, petId) values (#{userId}, #{petId})
+    </insert>
+
+    <delete id="unStarPet" >
+        delete from starpet where userId = #{uerId} and #{petId}
+    </delete>
 
 
 </mapper>

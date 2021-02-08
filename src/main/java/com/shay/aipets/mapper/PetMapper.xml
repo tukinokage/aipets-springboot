@@ -15,12 +15,20 @@
         <result property="viewNum" column="viewNum" jdbcType="INTEGER"/>
     </resultMap>
 
+    <resultMap type="com.shay.aipets.entity.Hospital" id="HospitalMap">
+        <result property="hospitalId" column="hospitalId" jdbcType="VARCHAR"/>
+        <result property="hospitalName" column="hospitalName" jdbcType="VARCHAR"/>
+        <result property="hospitalPhoneNum" column="hospitalPhoneNum" jdbcType="VARCHAR"/>
+        <result property="hospitalIntroduce" column="hospitalIntroduce" jdbcType="VARCHAR"/>
+        <result property="hospitalUrl" column="hospitalUrl" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <resultMap type="com.shay.aipets.entity.Store" id="StoreMap">
-        <result property="petId" column="petId" jdbcType="VARCHAR"/>
-        <result property="petName" column="userName" jdbcType="VARCHAR"/>
-        <result property="petEnglishName" column="petEnglishName" jdbcType="VARCHAR"/>
-        <result property="femaleWeight" column="femaleWeight" jdbcType="VARCHAR"/>
-        <result property="maleWeight" column="maleWeight" jdbcType="VARCHAR"/>
+        <result property="storeId" column="storeId" jdbcType="VARCHAR"/>
+        <result property="storeName" column="storeName" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="imgUrl" jdbcType="VARCHAR"/>
+        <result property="storeIntroduce" column="storeIntroduce" jdbcType="VARCHAR"/>
+        <result property="storeUrl" column="storeUrl" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询信息-单个-多个-全部-->
@@ -141,39 +149,67 @@
         from petintroduce
         <where>
             <if test="petId != null and petId != ''">
-                and petId = #{petId}
+                 petId = #{petId}
             </if>
 
         </where>
     </select>
 
-    <!--查询头像信息图片-单个-多个-全部-->
-    <select id="getPetHospital"  parameterType="com.shay.aipets.dto.Pet"  resultMap="">
+    <!--查询医院信息-单个-多个-全部-->
+    <select id="getPetHospital" parameterType="com.shay.aipets.entity.Hospital" resultMap="HospitalMap">
         select
         *
         from hospital
         <where>
 
-            <if test="petId != null and petId != ''">
-                and petId = #{petId}
+            <if test="hospitalId != null and hospitalId != ''">
+                 hospitalId = #{hospitalId}
             </if>
 
         </where>
     </select>
 
-    !--查询头像信息图片-单个-多个-全部-->
-    <select id="getPetStore"  parameterType="com.shay.aipets.dto.Pet"  resultMap="">
+    !--查询petStore-单个-多个-全部-->
+    <select id="getPetStore"  parameterType="com.shay.aipets.entity.Store"  resultMap="StoreMap">
         select
         *
         from store
         <where>
-            <if test="petId != null and petId != ''">
-                and petId = #{petId}
+            <if test="storeId != null and storeId != ''">
+                 storeId = #{storeId}
             </if>
 
         </where>
 
     </select>
+
+
+    !--查询petStoreId-单个-多个-全部-->
+    <select id="getPetStoreIdList"  resultType="java.lang.String">
+        select
+        storeId
+        from storecontact
+        <where>
+            <if test="petId != null and petId != ''">
+                petId = #{petId}
+            </if>
+
+        </where>
+    </select>
+
+    !--查询petHospitalId-单个-多个-全部-->
+    <select id="getPetHospitalIdList"  resultType="java.lang.String">
+        select
+        hospitalId
+        from hospitalcontact
+        <where>
+            <if test="petId != null and petId != ''">
+                 petId = #{petId}
+            </if>
+
+        </where>
+    </select>
+
     <!--查询是否存在数量统计记录数-->
     <select id="countDateViewColumn"  resultType="java.lang.Integer">
         select count(*) from petdayviewnum
@@ -209,6 +245,5 @@
     <select id="selectDateViewNum" parameterType="com.shay.aipets.dto.PetDayViewNum"  resultType="java.lang.Integer">
         select viewNum from petdayviewnum where petId = #{petId} and stime = #{stime};
     </select>
-
 
 </mapper>

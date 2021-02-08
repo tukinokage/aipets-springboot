@@ -65,75 +65,7 @@ public class LoginAndRegisterController {
     }
 
 
-    /**修改信息
-     *
-     * @return  UpdateUserInfoResponse;
-     *   通过token检查缓存中id是否与请求id相符
-     *
-    * */
-    @ResponseBody
-    @RequestMapping(value = "/updateInfo")
-    public BaseResponse<UpdateUserInfoResponse> updateUserInfo(UpdateUserInfoParam updateUserInfoParam){
-        BaseResponse<UpdateUserInfoResponse> response = new BaseResponse<>();
-        UpdateUserInfoResponse updateUserInfoResponse = new UpdateUserInfoResponse();
-        try {
-           String userId = userService.getIdByToken(updateUserInfoParam.getUserToken());
-           if(userId.equals(updateUserInfoParam.getUserId())){
-               User user = new User();
-               user.setUserId(userId);
-              // user.setSex(updateUserInfoParam.get);
-               user.setUserName(updateUserInfoParam.getUserName());
-               user.setSign(updateUserInfoParam.getSign());
-               boolean b = userService.updateInfoById(user);
-               if(!b) {
-                   throw new MyException("修改失败");
-               }
-           }else {
-               throw new MyException("非法操作");
-           }
-        }catch (MyException e){
-            response.setErrorMsg(e.getMessage());
-        }catch (Exception e){
-            response.setErrorMsg("服务器出错");
-        }finally {
-            return response;
-        }
-    }
 
-    /**修改pw
-     *
-     * @return  UpdateUserInfoResponse;
-     *   通过token检查缓存中id是否与请求id相符
-     *
-    * */
-    @ResponseBody
-    @RequestMapping(value = "/updatePassword")
-    public BaseResponse<SetPwResponseData> updatePassword(SetPwRequestParam setPwRequestParam){
-        BaseResponse<SetPwResponseData> response = new BaseResponse<>();
-        SetPwResponseData setPwResponseData = new SetPwResponseData();
-        response.setData(setPwResponseData);
-        try {
-            String phoneToken = setPwRequestParam.getPhoneToken();
-            String phone = userService.getPhoneByPhoneToken(phoneToken);
-           if(userService.isPhoneRg(phone)){
-               User user = new User();
-               user.setPassWord(setPwRequestParam.getPassword());
-               user.setUserId(setPwRequestParam.getUserId());
-               boolean b = userService.updateInfoById(user);
-               if(!b) {
-                   throw new MyException("修改失败");
-               }
-           }else {
-               throw new MyException("非法操作");
-           }
-        }catch (MyException e){
-            response.setErrorMsg(e.getMessage());
-        }catch (Exception e){
-            response.setErrorMsg("服务器出错");
-        }finally {
-            return response;
-        }
-    }
 
     /**修改信息
      *

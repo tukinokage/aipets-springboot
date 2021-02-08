@@ -24,8 +24,10 @@ public interface PetMapper {
     List<Pet> queryByNoneRank( SelectPetCondition selectPetCondition);
     List<Pet> queryByRank(SelectPetCondition selectPetCondition);
 
-    List<Store> getPetStore(Pet pet);
-    List<Hospital> getPetHospital(Pet pet);
+    List<Store> getPetStore(Store store);
+    List<Hospital> getPetHospital(Hospital hospital);
+    List<String> getPetStoreIdList(@Param("petId") String petId);
+    List<String> getPetHospitalIdList(@Param("petId") String petId);
     PetIntroduce getPetIntroduce(Pet pet);
 
     List<PetPic> getPetPic(Pet pet);

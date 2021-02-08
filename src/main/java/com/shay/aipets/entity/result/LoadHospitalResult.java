@@ -1,5 +1,7 @@
 package com.shay.aipets.entity.result;
 
+
+
 import com.shay.aipets.entity.Hospital;
 import org.apache.http.util.TextUtils;
 

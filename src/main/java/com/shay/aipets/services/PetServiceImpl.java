@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -67,14 +68,29 @@ public class PetServiceImpl implements  PetService {
 
     @Override
     public List<Store> getPetStore(Pet pet) throws Exception {
-        List<Store> petStore = petMapper.getPetStore(pet);
-        return petStore;
+        List<String> idList = petMapper.getPetStoreIdList(pet.getPetId());
+        List<Store> petStores = new ArrayList<>();
+        for(String id:idList){
+            Store qStore = new Store();
+            qStore.setStoreId(id);
+            List<Store> petStore = petMapper.getPetStore(qStore);
+            petStores.addAll(petStore);
+        }
+
+        return petStores;
     }
 
     @Override
     public List<Hospital> getPetHospital(Pet pet) throws Exception {
-        List<Hospital> petHospital = petMapper.getPetHospital(pet);
-        return petHospital;
+        List<String> idList = petMapper.getPetHospitalIdList(pet.getPetId());
+        List<Hospital> petHospitals = new ArrayList<>();
+        for(String id:idList){
+            Hospital qHospital = new Hospital();
+            qHospital.setHospitalId(id);
+            List<Hospital> petStore = petMapper.getPetHospital(qHospital);
+            petHospitals.addAll(petStore);
+        }
+        return petHospitals;
     }
 
     @Override

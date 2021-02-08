@@ -1,7 +1,6 @@
 package com.shay.aipets.entity.result;
 
 
-
 import com.shay.aipets.entity.Store;
 import org.apache.http.util.TextUtils;
 
