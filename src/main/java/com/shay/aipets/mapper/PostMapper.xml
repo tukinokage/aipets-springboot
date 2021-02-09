@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shay.aipets.mapper.PostMapper">
+    <resultMap type="com.shay.aipets.dto.DataTablePost" id="PostMap">
+        <result property="postId" column="postId" jdbcType="VARCHAR"/>
+        <result property="userId" column="v" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="contextText" column="contextText" jdbcType="VARCHAR"/>
+        <result property="dateTime" column="dateTime" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.shay.aipets.dto.DataTablePost">
+        insert into post(postId, userId, title , contextText, dateTime, type)
+        values (#{postId}, #{userId}, #{title}, #{contextText} , #{dateTime}, #{type})
+    </insert>
+
+
+    <!--查询信息-单个-多个-全部-->
+    <select id="query"  parameterType="com.shay.aipets.dto.DataTablePost"  resultMap="PostMap">
+        select
+          *
+        from post
+        <where>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="postId != null and postId != ''">
+                and userId = #{userId}
+            </if>
+
+            <if test="type != null">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <!--查询背景信息图片-单个名称-全部-->
+    <select id="getBackGroundName"  parameterType="com.shay.aipets.dto.Background"  resultType="java.lang.String">
+        select
+        bgImgName
+        from background
+        <where>
+
+            <if test="userId != null and userId != ''">
+                and userId = #{userId}
+            </if>
+
+        </where>
+    </select>
+
+    <!--查询头像信息图片-单个-多个-全部-->
+    <select id="getHeadImgName"  parameterType="com.shay.aipets.dto.HeadImg"  resultType="java.lang.String">
+        select
+        headImgName
+        from headimg
+        <where>
+
+            <if test="userId != null and userId != ''">
+                and userId = #{userId}
+            </if>
+
+        </where>
+    </select>
+
+    <!--查询数量-->
+    <select id="queryNum"  parameterType="com.shay.aipets.dto.User"  resultType="java.lang.Integer">
+        select
+            count(*)
+        from user
+        <where>
+            <if test="userName != null">
+                and userName = #{userName}
+            </if>
+            <if test="userId != null ">
+                and userId = #{userId}
+            </if>
+            <if test="passWord != null">
+                and passWord = #{passWord}
+            </if>
+            <if test="phoneNum != null">
+                and phoneNum = #{phoneNum}
+            </if>
+        </where>
+    </select>
+
+    <!-- useGeneratedKeys="true"生成主键  keyProperty="id"是Java对象的属性名id -->
+    
+<!--&lt;!&ndash;通过主键修改数据&ndash;&gt;-->
+    <update id="update" parameterType="com.shay.aipets.dto.User"  >
+        update user
+        <set>
+            <if test="userName != null and userName != ''">
+                userName = #{userName},
+            </if>
+            <if test="passWord != null">
+                passWord = #{passWord},
+            </if>
+            <if test="sign != null">
+                sign = #{sign},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+        </set>
+        where userId = #{userId}
+    </update>
+
+    <!--设置头像图片名字-->
+    <update id="setHeadImgName" parameterType="com.shay.aipets.dto.HeadImg"  >
+        update headimg
+        <set>
+
+            <if test="headImgName != null">
+                headImgName = #{headImgName},
+            </if>
+
+        </set>
+        where userId = #{userId}
+    </update>
+    <!--设置背景图片名字-->
+    <update id="setBackGroundName" parameterType="com.shay.aipets.dto.Background"  >
+        update background
+        <set>
+
+            <if test="bgImgName != null">
+                bgImgName = #{bgImgName},
+            </if>
+
+        </set>
+        where userId = #{userId}
+    </update>
+
+    <select id="queryStarPetNum" resultType="java.lang.Integer"  >
+        select count(*)
+        from starpet
+
+        where userId = #{userId} and petId = #{petId}
+    </select>
+
+    <insert id="starPet" >
+        insert into starpet(userId, petId) values (#{userId}, #{petId})
+    </insert>
+
+    <delete id="unStarPet" >
+        delete from starpet where userId = #{uerId} and #{petId}
+    </delete>
+
+
+</mapper>

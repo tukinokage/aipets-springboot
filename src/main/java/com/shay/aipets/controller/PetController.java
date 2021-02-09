@@ -11,6 +11,7 @@ import com.shay.aipets.entity.response.BaseResponse;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.services.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,11 +26,12 @@ public class PetController {
     @Autowired
     PetService petService;
 
+
     //...根据筛选条件加载列表
     @RequestMapping(value = "/petlist")
     @ResponseBody
     public BaseResponse<List<Pet>> getPetList(LoadPetCondition loadPetCondition){
-        System.out.println(loadPetCondition.getCurrentPageNum());
+
         BaseResponse<List<Pet>> response = new BaseResponse<>();
         if(loadPetCondition == null ){
             response.setErrorMsg("服务没有收到请求数据");
@@ -65,7 +67,7 @@ public class PetController {
     //加载介绍列表
     @RequestMapping(value = "/loadPetIntroduction")
     @ResponseBody
-    public BaseResponse<PetIntroduce> getPetList(LoadPetIntroductionCondition loadPetIntroductionCondition){
+    public BaseResponse<PetIntroduce> loadPetIntroduction(LoadPetIntroductionCondition loadPetIntroductionCondition){
         System.out.println(loadPetIntroductionCondition.getPetId());
         BaseResponse<PetIntroduce> response = new BaseResponse<>();
         if(loadPetIntroductionCondition == null ){
@@ -120,7 +122,7 @@ public class PetController {
 
 
     //加载医院列表
-    @RequestMapping(value = "/loadPetStore")
+    @RequestMapping(value = "/loadPetHospital")
     @ResponseBody
     public BaseResponse<List<Hospital>> getPetHospitalList(LoadPetHospitalCondition loadPetHospitalCondition){
         System.out.println(loadPetHospitalCondition.getPetId());

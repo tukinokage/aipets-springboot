@@ -2,7 +2,7 @@ package com.shay.aipets.dto;
 
 import java.util.List;
 
-public class Post {
+public class DataTablePost {
     String postId;
     String userId;
     String title;

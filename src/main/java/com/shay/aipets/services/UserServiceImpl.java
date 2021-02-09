@@ -13,8 +13,10 @@ import com.shay.aipets.utils.CloopenUtil;
 import com.shay.aipets.utils.MD5CodeCeator;
 import com.shay.aipets.utils.TextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.soap.Text;
 import java.util.List;
@@ -23,6 +25,14 @@ import java.util.Random;
 @Component
 @Service("userService")
 public class UserServiceImpl implements UserService {
+
+    @Value("${file.root.path}")
+    String fileRootPath;
+
+    @Value("${img.user.head.path}")
+    String userHeadPath;
+    @Value("${img.user.bg.path}")
+    String userBgPath;
 
     @Autowired
     RedisUtil redisUtil;
@@ -213,6 +223,23 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    /**检查token匹配*/
+    @Override
+    public boolean checkToken(String userId, String token) throws Exception {
+        if(TextUtil.isEmpty(userId) || TextUtil.isEmpty(token) ){
+            throw new MyException("服务器通知：获取参数错误");
+        }
+
+        String rtoken = (String) redisUtil.get(userId);
+        String ruid = (String) redisUtil.get(token);
+        if(token.equals(rtoken) &&  userId.equals(ruid)) {
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
     /***
      * 向目标手机发送验证码，并生成缓存phonenum和code，用于验证
      *
@@ -286,12 +313,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String uploadHeadImg(MultipartFile file) throws Exception {
+        return null;
+    }
+
+    @Override
     public boolean updateBgImg(String userIdString, String bgImgName) throws Exception {
         Background background = new Background();
         background.setUserId(userIdString);
         background.setBgImgName(bgImgName);
         boolean b = userMapper.setBackGroundName(background);
         return b;
+    }
+
+    @Override
+    public String uploadBgImg(MultipartFile file) throws Exception {
+        return null;
     }
 
 

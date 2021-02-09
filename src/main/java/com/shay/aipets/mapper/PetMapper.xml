@@ -31,6 +31,13 @@
         <result property="storeUrl" column="storeUrl" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap type="com.shay.aipets.entity.PetIntroduce" id="PetIntroduceMap">
+        <result property="petId" column="petId" jdbcType="VARCHAR"/>
+        <result property="petStory" column="petStory" jdbcType="VARCHAR"/>
+        <result property="petAttention" column="petAttention" jdbcType="VARCHAR"/>
+        <result property="headImgName" column="headImgName" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <!--查询信息-单个-多个-全部-->
     <select id="query"  parameterType="com.shay.aipets.dto.Pet"  resultMap="PetMap">
         select
@@ -143,7 +150,7 @@
     </select>
 
     <!--查询头像信息图片-单个-多个-全部-->
-    <select id="getPetIntroduce"  parameterType="com.shay.aipets.dto.Pet"  resultType="java.lang.String">
+    <select id="getPetIntroduce"  parameterType="com.shay.aipets.dto.Pet"  resultMap="PetIntroduceMap">
         select
         *
         from petintroduce
@@ -169,44 +176,42 @@
         </where>
     </select>
 
-    !--查询petStore-单个-多个-全部-->
+   <!--查询petStore-单个-多个-全部-->
     <select id="getPetStore"  parameterType="com.shay.aipets.entity.Store"  resultMap="StoreMap">
         select
         *
         from store
         <where>
             <if test="storeId != null and storeId != ''">
-                 storeId = #{storeId}
+                and  storeId = #{storeId}
             </if>
-
         </where>
 
     </select>
 
 
-    !--查询petStoreId-单个-多个-全部-->
+   <!--查询petStoreId-单个-多个-全部&ndash;&gt;-->
     <select id="getPetStoreIdList"  resultType="java.lang.String">
         select
         storeId
         from storecontact
         <where>
             <if test="petId != null and petId != ''">
-                petId = #{petId}
+               and petId = #{petId}
             </if>
 
         </where>
     </select>
 
-    !--查询petHospitalId-单个-多个-全部-->
+    <!--查询petHospitalId-单个-多个-全部-->
     <select id="getPetHospitalIdList"  resultType="java.lang.String">
         select
         hospitalId
         from hospitalcontact
         <where>
             <if test="petId != null and petId != ''">
-                 petId = #{petId}
+              and  petId = #{petId}
             </if>
-
         </where>
     </select>
 
