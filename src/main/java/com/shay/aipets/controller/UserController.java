@@ -1,27 +1,35 @@
 package com.shay.aipets.controller;
 
+import com.shay.aipets.dto.DailyRecord;
 import com.shay.aipets.dto.User;
-import com.shay.aipets.entity.params.CheckIsStarParam;
-import com.shay.aipets.entity.params.SetPwRequestParam;
-import com.shay.aipets.entity.params.StarPetParam;
-import com.shay.aipets.entity.params.UpdateUserInfoParam;
+import com.shay.aipets.entity.UserDailyRecordItem;
+import com.shay.aipets.entity.params.*;
 import com.shay.aipets.entity.response.BaseResponse;
 import com.shay.aipets.entity.response.CheckIsStarResponse;
 import com.shay.aipets.entity.response.StarPetResponse;
 import com.shay.aipets.entity.responsedata.SetPwResponseData;
+import com.shay.aipets.entity.responses.GetDailyRecordResponse;
+import com.shay.aipets.entity.responses.PostDaliyResponse;
 import com.shay.aipets.entity.responses.UpdateUserInfoResponse;
 import com.shay.aipets.myexceptions.MyException;
+import com.shay.aipets.services.DailyRecordService;
 import com.shay.aipets.services.UserService;
+import com.shay.aipets.utils.MD5CodeCeator;
+import com.shay.aipets.utils.TimeUntil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/usr")
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    DailyRecordService dailyRecordService;
 
     @ResponseBody
     @RequestMapping(value = "/starPet")
@@ -132,6 +140,56 @@ public class UserController {
             }else {
                 throw new MyException("非法操作");
             }
+        }catch (MyException e){
+            response.setErrorMsg(e.getMessage());
+        }catch (Exception e){
+            response.setErrorMsg("服务器出错");
+        }finally {
+            return response;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getDailyRecord")
+    public BaseResponse<GetDailyRecordResponse> getDailyRecord(GetUserDailyRecordParam getUserDailyRecordParam){
+        BaseResponse<GetDailyRecordResponse> response = new BaseResponse<>();
+        GetDailyRecordResponse getDailyRecordResponse = new GetDailyRecordResponse();
+
+        try {
+            List<UserDailyRecordItem> queryList = dailyRecordService.query(getUserDailyRecordParam.getUserId(),
+                    Integer.valueOf(getUserDailyRecordParam.getPerPagerCount()),
+                    Integer.valueOf(getUserDailyRecordParam.getCurrentPager()));
+            getDailyRecordResponse.setDailyRecordItemList(queryList);
+
+            response.setData(getDailyRecordResponse);
+        }catch (MyException e){
+            response.setErrorMsg(e.getMessage());
+        }catch (Exception e){
+            response.setErrorMsg("服务器出错");
+        }finally {
+            return response;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/insertDailyRecord")
+    public BaseResponse<PostDaliyResponse> getDailyRecord(ConfrimDaliyRecord confrimDaliyRecord){
+        BaseResponse<PostDaliyResponse> response = new BaseResponse<>();
+        PostDaliyResponse postDaliyResponse = new PostDaliyResponse();
+
+        try {
+            if(userService.checkToken(confrimDaliyRecord.getUserId(), confrimDaliyRecord.getToken())){
+                DailyRecord dailyRecord = new DailyRecord();
+                dailyRecord.setContentText(confrimDaliyRecord.getContent());
+                dailyRecord.setUserId(confrimDaliyRecord.getUserId());
+                dailyRecord.setDateTime(TimeUntil.getDateTime());
+                dailyRecord.setDRId(MD5CodeCeator.randomUUID());
+                response.setData(postDaliyResponse);
+            }else {
+                throw new MyException("服务器：登录失效");
+            }
+
         }catch (MyException e){
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
