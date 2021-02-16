@@ -2,91 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shay.aipets.mapper.DaillyRecordMapper">
     <resultMap type="com.shay.aipets.dto.DailyRecord" id="DailyRecordMap">
-        <result property="postId" column="postId" jdbcType="VARCHAR"/>
-        <result property="userName" column="userName" jdbcType="VARCHAR"/>
-        <result property="phoneNum" column="phoneNum" jdbcType="VARCHAR"/>
-        <result property="passWord" column="passWord" jdbcType="VARCHAR"/>
-        <result property="wbId" column="wbId" jdbcType="VARCHAR"/>
-        <result property="headImgName" column="headImgName" jdbcType="VARCHAR"/>
-        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="DRId" column="DRId" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
+        <result property="contentText" column="contentText" jdbcType="VARCHAR"/>
+        <result property="dateTime" column="dateTime" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <insert id="insert" parameterType="com.shay.aipets.dto.User">
-        insert into User(userName, userId, sex , passWord, wbId, phoneNum)
-        values (#{userName}, #{userId}, #{sex}, #{passWord} , #{wbId}, #{phoneNum})
+    <insert id="insert" parameterType="com.shay.aipets.dto.DailyRecord">
+        insert into dailyrecord(DRId, userId, contentText , dateTime)
+        values (#{DRId}, #{userId}, #{contentText}, #{dateTime})
     </insert>
 
     <!--查询信息-单个-多个-全部-->
-    <select id="query"  parameterType="com.shay.aipets.dto.User"  resultMap="UserMap">
+    <select id="query"   resultMap="DailyRecordMap">
         select
           *
-        from user
+        from dailyrecord
         <where>
-            <if test="userName != null">
-                and userName = #{userName}
-            </if>
             <if test="userId != null and userId != ''">
                 and userId = #{userId}
             </if>
-            <if test="passWord != null">
-                and passWord = #{passWord}
-            </if>
-
-            <if test="phoneNum != null">
-                and phoneNum = #{phoneNum}
-            </if>
         </where>
+        limit #{startNum},#{endNum}
     </select>
-
-    <!--查询背景信息图片-单个名称-全部-->
-    <select id="getBackGroundName"  parameterType="com.shay.aipets.dto.Background"  resultType="java.lang.String">
-        select
-        bgImgName
-        from background
-        <where>
-
-            <if test="userId != null and userId != ''">
-                and userId = #{userId}
-            </if>
-
-        </where>
-    </select>
-
-    <!--查询头像信息图片-单个-多个-全部-->
-    <select id="getHeadImgName"  parameterType="com.shay.aipets.dto.HeadImg"  resultType="java.lang.String">
-        select
-        headImgName
-        from headimg
-        <where>
-
-            <if test="userId != null and userId != ''">
-                and userId = #{userId}
-            </if>
-
-        </where>
-    </select>
-
-    <!--查询数量-->
-    <select id="queryNum"  parameterType="com.shay.aipets.dto.User"  resultType="java.lang.Integer">
-        select
-            count(*)
-        from user
-        <where>
-            <if test="userName != null">
-                and userName = #{userName}
-            </if>
-            <if test="userId != null ">
-                and userId = #{userId}
-            </if>
-            <if test="passWord != null">
-                and passWord = #{passWord}
-            </if>
-            <if test="phoneNum != null">
-                and phoneNum = #{phoneNum}
-            </if>
-        </where>
-    </select>
-
-    <!-- useGeneratedKeys="true"生成主键  keyProperty="id"是Java对象的属性名id -->
 
 </mapper>

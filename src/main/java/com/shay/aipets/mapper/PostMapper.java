@@ -1,8 +1,13 @@
 package com.shay.aipets.mapper;
 
 import com.shay.aipets.dto.DataTablePost;
+import com.shay.aipets.dto.PostPic;
+import com.shay.aipets.entity.BBSPost;
+import com.shay.aipets.entity.GetPostConditions;
+import com.shay.aipets.entity.Post;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,11 +16,11 @@ import java.util.List;
 @Repository
 public interface PostMapper {
     int insert(DataTablePost dataTablePost);
-    int queryNum(DataTablePost dataTablePost);
-    List<DataTablePost> query(DataTablePost dataTablePost);
-    List<DataTablePost> queryByCondition(@Param("condition") String condition);
+    List<BBSPost> query(GetPostConditions conditions);
+    List<Post> getPostListByPId(@Param("postList")String postId);
 
     //图片
     List<String> getPostPic(@Param("postId") String postId);
+    boolean savePostPic(PostPic postPic);
 
 }

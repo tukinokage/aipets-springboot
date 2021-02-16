@@ -1,7 +1,10 @@
 package com.shay.aipets.controller;
 
 import com.google.gson.Gson;
+import com.shay.aipets.dto.DataTablePost;
 import com.shay.aipets.dto.User;
+import com.shay.aipets.entity.BBSPost;
+import com.shay.aipets.entity.Post;
 import com.shay.aipets.entity.params.*;
 import com.shay.aipets.entity.response.*;
 import com.shay.aipets.entity.responsedata.SetPwResponseData;
@@ -12,6 +15,7 @@ import com.shay.aipets.services.PostService;
 import com.shay.aipets.services.UserService;
 import com.shay.aipets.utils.MD5CodeCeator;
 import com.shay.aipets.utils.TextUtil;
+import com.shay.aipets.utils.TimeUntil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/post")
@@ -35,7 +42,38 @@ public class PostController {
         BaseResponse<GetPostListResponse> response = new BaseResponse<>();
         GetPostListResponse getPostListResponse = new GetPostListResponse();
         try {
+            List<BBSPost> posts =new ArrayList<>();
+            if(!TextUtil.isEmpty(getPostListParam.getSearchCondition())){
+                posts = postService.getPostListBySearch(
+                        getPostListParam.getSearchCondition(),
+                        getPostListParam.getPerPaperNum(),
+                        getPostListParam.getCurrentPaperNum());
+            }else  if(!TextUtil.isEmpty(getPostListParam.getSearchUid())){
+                posts = postService.getPostListByUid(
+                        getPostListParam.getSearchUid(),
+                        getPostListParam.getPerPaperNum(),
+                        getPostListParam.getCurrentPaperNum());
+            }else if(!TextUtil.isEmpty(String.valueOf(getPostListParam.getType()))){
+                posts = postService.getPostListByType(
+                        getPostListParam.getType(),
+                        getPostListParam.getPerPaperNum(),
+                        getPostListParam.getCurrentPaperNum());
+            }
 
+            for(int i = 0; i < posts.size(); i++){
+                String postId = posts.get(i).getPostId();
+                List<String> postPicNameList= postService.getPostPicNameListByPostId(postId);
+                if(!postPicNameList.isEmpty()){
+                    posts.get(i).setPicName(postPicNameList.get(0));
+                }
+            }
+            if(posts.size() < getPostListParam.getPerPaperNum()){
+                getPostListResponse.setHasMore(false);
+            }else {
+                getPostListResponse.setHasMore(true);
+            }
+            getPostListResponse.setBbsPostList(posts);
+            response.setData(getPostListResponse);
 //        }catch (MyException e){
 //            response.setErrorMsg(e.getMessage());
         }catch (Exception e){
@@ -52,6 +90,15 @@ public class PostController {
         GetPostInfoResponse getPostInfoResponse = new GetPostInfoResponse();
         try {
 
+            String postId = getPostInfoParam.getPostId();
+            Post post = postService.getPostListByPId(postId);
+            List<String> postPicNameList= postService.getPostPicNameListByPostId(postId);
+            if(!postPicNameList.isEmpty()){
+                post.setPicNameList(postPicNameList);
+            }
+
+            getPostInfoResponse.setPost(post);
+            response.setData(getPostInfoResponse);
        /*} catch (MyException e){
             response.setErrorMsg(e.getMessage());*/
         } catch (Exception e){
@@ -110,8 +157,22 @@ public class PostController {
         PostResponse postResponse = new PostResponse();
         try {
 
+            boolean b = userService.checkToken(postParam.getUserId(), postParam.getToken());
+            if(b){
+                DataTablePost dataTablePost = new DataTablePost();
+                dataTablePost.setContextText(postParam.getContentText());
+                dataTablePost.setDateTime(TimeUntil.getDateTime());
+                dataTablePost.setPostId(MD5CodeCeator.randomUUID());
+                dataTablePost.setTitle(postParam.getTitle());
+                dataTablePost.setType(postParam.getType());
+                dataTablePost.setUserId(postParam.getUserId());
+                postService.insertPost(dataTablePost, postParam.getPicList());
+            }else {
+                throw new MyException("服务器：身份失效");
+            }
         /*}catch (MyException e){
             response.setErrorMsg(e.getMessage());*/
+
         }catch (Exception e){
             response.setErrorMsg("服务器出错");
         }finally {

@@ -40,7 +40,6 @@ public class PostPicInfo {
         this.uri = uri;
     }
 
-
     public Picture getPicture() {
         return picture;
     }

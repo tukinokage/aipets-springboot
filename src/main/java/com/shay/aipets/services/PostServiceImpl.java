@@ -1,11 +1,18 @@
 package com.shay.aipets.services;
 
 import com.shay.aipets.dto.DataTablePost;
+import com.shay.aipets.dto.PostPic;
+import com.shay.aipets.entity.BBSPost;
+import com.shay.aipets.entity.GetPostConditions;
+import com.shay.aipets.entity.Picture;
 import com.shay.aipets.entity.Post;
+import com.shay.aipets.entity.params.GetPostListParam;
+import com.shay.aipets.mapper.PostMapper;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.utils.FileUrIUtil;
 import com.shay.aipets.utils.MD5CodeCeator;
 import javafx.geometry.Pos;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -24,6 +31,10 @@ public class PostServiceImpl implements PostService {
 
     @Value("${img.post.path}")
     String imgPostPath;
+
+    @Autowired
+    PostMapper postMapper;
+
 
     @Override
     public String uploadPic(MultipartFile file) throws Exception {
@@ -51,26 +62,72 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public boolean savePicName(String postId, String picName) throws Exception {
-        return false;
+        PostPic postPic = new PostPic();
+        postPic.setPicName(picName);
+        postPic.setPostId(postId);
+        return postMapper.savePostPic(postPic);
     }
 
     @Override
-    public List<DataTablePost> getPostListByUid(String uid, int perPaperNum, int currentPaperNum) throws Exception {
-        return null;
+    public boolean insertPost(DataTablePost dataTablePost, List<Picture> pictures) throws Exception {
+        int a = postMapper.insert(dataTablePost);
+        if(a < 1){
+            return false;
+        }
+
+        String postId = dataTablePost.getPostId();
+        PostPic postPic = new PostPic();
+        postPic.setPostId(postId);
+        for(Picture pic: pictures){
+            postPic.setPicName(pic.getPicName());
+            postMapper.savePostPic(postPic);
+        }
+
+        return true;
     }
 
     @Override
-    public List<DataTablePost> getPostListByCondition(int type, int perPaperNum, int currentPaperNum) throws Exception {
-        return null;
+    public Post getPostListByPId(String postId) throws Exception {
+        List<Post> postListByPId = postMapper.getPostListByPId(postId);
+        return postListByPId.get(0);
     }
 
     @Override
-    public List<DataTablePost> getPostListBySearch(String searchCondition, int perPaperNum, int currentPaperNum) throws Exception {
-        return null;
+    public List<BBSPost> getPostListByUid(String uid, int perPaperNum, int currentPaperNum) throws Exception {
+        GetPostConditions conditions = new GetPostConditions();
+        int start = currentPaperNum * perPaperNum - 1;
+        int end = start + perPaperNum ;
+        conditions.setEndPaperNum(end);
+        conditions.setStartPaperNum(start);
+        conditions.setSearchUid(uid);
+        return postMapper.query(conditions);
+    }
+
+    @Override
+    public List<BBSPost> getPostListByType(int type, int perPaperNum, int currentPaperNum) throws Exception {
+        GetPostConditions conditions = new GetPostConditions();
+        int start = currentPaperNum * perPaperNum - 1;
+        int end = start + perPaperNum ;
+        conditions.setEndPaperNum(end);
+        conditions.setStartPaperNum(start);
+        conditions.setType(type);
+        return postMapper.query(conditions);
+    }
+
+    @Override
+    public List<BBSPost> getPostListBySearch(String searchCondition, int perPaperNum, int currentPaperNum) throws Exception {
+        GetPostConditions conditions = new GetPostConditions();
+        int start = currentPaperNum * perPaperNum - 1;
+        int end = start + perPaperNum ;
+        conditions.setEndPaperNum(end);
+        conditions.setStartPaperNum(start);
+        conditions.setSearchCondition(searchCondition);
+        return postMapper.query(conditions);
     }
 
     @Override
     public List<String> getPostPicNameListByPostId(String postId) throws Exception {
-        return null;
+        List<String> postPics = postMapper.getPostPic(postId);
+        return postPics;
     }
 }
