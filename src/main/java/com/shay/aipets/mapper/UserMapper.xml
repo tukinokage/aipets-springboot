@@ -122,11 +122,16 @@
         </set>
         where userId = #{userId}
     </update>
+
+    <!-- xin zeng headimg-->
+    <insert id="insertHeadImgName" parameterType="com.shay.aipets.dto.HeadImg"  >
+        insert into headimg(userId, headImgName) VALUES  (#{userId}, #{headImgName})
+    </insert>
+
     <!--设置背景图片名字-->
     <update id="setBackGroundName" parameterType="com.shay.aipets.dto.Background"  >
         update background
         <set>
-
             <if test="bgImgName != null">
                 bgImgName = #{bgImgName},
             </if>
@@ -134,6 +139,12 @@
         </set>
         where userId = #{userId}
     </update>
+
+    <!--设置背景图片名字-->
+    <insert id="insertBackGroundName" parameterType="com.shay.aipets.dto.Background"  >
+        insert into background(userId, bgImgName)
+        values (#{userId}, #{bgImgName})
+    </insert>
 
     <select id="queryStarPetNum" resultType="java.lang.Integer"  >
         select count(*)

@@ -40,6 +40,23 @@
         limit #{startPaperNum}, #{endPaperNum}
     </select>
 
+    <!--查询SHULIANG-单个-多个-全部-->
+    <select id="queryNum"  parameterType="com.shay.aipets.entity.GetPostConditions" >
+        select
+          count(*)
+        from post
+        <where>
+
+            <if test="searchUid != null and searchUid != ''">
+                and userId = #{searchUid}
+            </if>
+            <if test="searchCondition != null">
+                and searchCondition like concat('%', #{searchCondition}, '%')
+            </if>
+        </where>
+        limit #{startPaperNum}, #{endPaperNum}
+    </select>
+
 
     <!--查询信息-单个-多个-全部-->
     <select id="getPostListByPId"   resultMap="PostMap">

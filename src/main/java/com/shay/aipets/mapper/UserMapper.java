@@ -19,8 +19,10 @@ public interface UserMapper {
     //图片
     String getHeadImgName(HeadImg headImg);
     boolean setHeadImgName(HeadImg headImg);
+    boolean insertHeadImgName(HeadImg headImg);
     String getBackGroundName(Background background);
     boolean setBackGroundName(Background background);
+    boolean insertBackGroundName(Background background);
 
     int queryStarPetNum(@Param("userId") String userId, @Param("petId") String petId);
     boolean starPet(@Param("userId") String userId, @Param("petId") String petId);

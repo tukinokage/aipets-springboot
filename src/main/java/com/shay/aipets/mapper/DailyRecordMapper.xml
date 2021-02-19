@@ -26,4 +26,16 @@
         limit #{startNum},#{endNum}
     </select>
 
+    <!--查询信息-单个-多个-全部-->
+    <select id="queryNum" >
+        select
+         count(*)
+        from dailyrecord
+        <where>
+            <if test="userId != null and userId != ''">
+                and userId = #{userId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

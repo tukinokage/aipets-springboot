@@ -1,6 +1,7 @@
 package com.shay.aipets.services;
 
 import com.shay.aipets.dto.User;
+import com.shay.aipets.entity.UserInfo;
 import com.shay.aipets.entity.responsedata.CheckPhoneRepData;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,15 +19,16 @@ public interface UserService {
 
     void sendMsg(String phoneNum) throws Exception;
     User getUserById(String id) throws Exception;
+    UserInfo getUserInfoById(String id) throws Exception;
     User getUserByName(String name) throws Exception;
 
     boolean isExistUserByName(String name) throws Exception;
     boolean updateInfoById(User updaterInfo) throws Exception;
 
     boolean updateHeadImg(String userIdString, String headImgName) throws Exception;
-    String uploadHeadImg(MultipartFile file) throws Exception;
+    String uploadHeadImg(MultipartFile file, String userId) throws Exception;
     boolean updateBgImg(String userIdString, String bgImgName) throws Exception;
-    String uploadBgImg(MultipartFile file) throws Exception;
+    String uploadBgImg(MultipartFile file, String userId) throws Exception;
 
     String getHeadImgName(String userId) throws Exception;
     String getBgImgName(String userId) throws Exception;

@@ -16,9 +16,7 @@ public interface PostService {
     boolean savePicName(String postId, String picName) throws Exception;
     boolean insertPost(DataTablePost dataTablePost, List<Picture> pictures) throws Exception;
 
-    /**@Param uid ：用户id pernum：每页数量， currentpapernum：当前页码
-     * */
-    Post getPostListByPId((String postId) throws Exception;
+    Post getPostListByPId(String postId) throws Exception;
     /**@Param uid ：用户id pernum：每页数量， currentpapernum：当前页码
      * */
     List<BBSPost> getPostListByUid(String uid, int perPaperNum, int currentPaperNum) throws Exception;

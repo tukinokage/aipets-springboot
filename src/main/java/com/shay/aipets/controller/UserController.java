@@ -1,25 +1,29 @@
 package com.shay.aipets.controller;
 
+import com.google.gson.Gson;
 import com.shay.aipets.dto.DailyRecord;
 import com.shay.aipets.dto.User;
+import com.shay.aipets.entity.UserCommentItem;
 import com.shay.aipets.entity.UserDailyRecordItem;
+import com.shay.aipets.entity.UserInfo;
 import com.shay.aipets.entity.params.*;
-import com.shay.aipets.entity.response.BaseResponse;
-import com.shay.aipets.entity.response.CheckIsStarResponse;
-import com.shay.aipets.entity.response.StarPetResponse;
+import com.shay.aipets.entity.response.*;
 import com.shay.aipets.entity.responsedata.SetPwResponseData;
-import com.shay.aipets.entity.responses.GetDailyRecordResponse;
-import com.shay.aipets.entity.responses.PostDaliyResponse;
-import com.shay.aipets.entity.responses.UpdateUserInfoResponse;
+import com.shay.aipets.entity.responses.*;
+import com.shay.aipets.mapper.DaillyRecordMapper;
 import com.shay.aipets.myexceptions.MyException;
+import com.shay.aipets.services.CommentService;
 import com.shay.aipets.services.DailyRecordService;
 import com.shay.aipets.services.UserService;
 import com.shay.aipets.utils.MD5CodeCeator;
+import com.shay.aipets.utils.TextUtil;
 import com.shay.aipets.utils.TimeUntil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,6 +34,8 @@ public class UserController {
     UserService userService;
     @Autowired
     DailyRecordService dailyRecordService;
+    @Autowired
+    CommentService commentService;
 
     @ResponseBody
     @RequestMapping(value = "/starPet")
@@ -114,6 +120,33 @@ public class UserController {
         }
     }
 
+    /**修改信息
+     *
+     * @return  UpdateUserInfoResponse;
+     *   通过token检查缓存中id是否与请求id相符
+     *
+     * */
+    @ResponseBody
+    @RequestMapping(value = "/getUserInfo")
+    public BaseResponse<GetUserInfoResponse> getUserInfo(GetUserInfoParam getUserInfoParam){
+        BaseResponse<GetUserInfoResponse> response = new BaseResponse<>();
+        GetUserInfoResponse getUserInfoResponse = new GetUserInfoResponse();
+        try {
+            String userId = getUserInfoParam.getUserId();
+            UserInfo userInfo = userService.getUserInfoById(userId);
+            getUserInfoResponse.setUserInfo(userInfo);
+
+            response.setData(getUserInfoResponse);
+
+        }catch (MyException e){
+            response.setErrorMsg(e.getMessage());
+        }catch (Exception e){
+            response.setErrorMsg("服务器出错");
+        }finally {
+            return response;
+        }
+    }
+
     /**修改pw
      *
      * @return  UpdateUserInfoResponse;
@@ -150,20 +183,26 @@ public class UserController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/getDailyRecord")
-    public BaseResponse<GetDailyRecordResponse> getDailyRecord(GetUserDailyRecordParam getUserDailyRecordParam){
-        BaseResponse<GetDailyRecordResponse> response = new BaseResponse<>();
-        GetDailyRecordResponse getDailyRecordResponse = new GetDailyRecordResponse();
+    @RequestMapping(value = "/getCommentList")
+    public BaseResponse<GetUserCommentResponse> getCommentList(GetUserCommentParam getUserCommentParam){
+        BaseResponse<GetUserCommentResponse> response = new BaseResponse<>();
+        GetUserCommentResponse getUserCommentResponse = new GetUserCommentResponse();
 
         try {
-            List<UserDailyRecordItem> queryList = dailyRecordService.query(getUserDailyRecordParam.getUserId(),
-                    Integer.valueOf(getUserDailyRecordParam.getPerPagerCount()),
-                    Integer.valueOf(getUserDailyRecordParam.getCurrentPager()));
-            getDailyRecordResponse.setDailyRecordItemList(queryList);
 
-            response.setData(getDailyRecordResponse);
-        }catch (MyException e){
-            response.setErrorMsg(e.getMessage());
+           // getUserCommentResponse.setCommentItemList();
+            List<UserCommentItem> commentItems = commentService.getCommentByUserId(getUserCommentParam.getUserId(),
+                    Integer.valueOf(getUserCommentParam.getPerPagerCount()),
+                    Integer.valueOf(getUserCommentParam.getCurrentPager()));
+            getUserCommentResponse.setCommentItemList(commentItems);
+            if(commentItems.size() < Integer.valueOf(getUserCommentParam.getPerPagerCount())){
+                getUserCommentResponse.setHasMore(false);
+            }else {
+                getUserCommentResponse.setHasMore(true);
+            }
+            response.setData(getUserCommentResponse);
+      /*  }catch (MyException e){
+            response.setErrorMsg(e.getMessage());*/
         }catch (Exception e){
             response.setErrorMsg("服务器出错");
         }finally {
@@ -172,9 +211,11 @@ public class UserController {
     }
 
 
+
+
     @ResponseBody
-    @RequestMapping(value = "/insertDailyRecord")
-    public BaseResponse<PostDaliyResponse> getDailyRecord(ConfrimDaliyRecord confrimDaliyRecord){
+    @RequestMapping(value = "/postDailyRecord")
+    public BaseResponse<PostDaliyResponse> postDailyRecord(ConfrimDaliyRecord confrimDaliyRecord){
         BaseResponse<PostDaliyResponse> response = new BaseResponse<>();
         PostDaliyResponse postDaliyResponse = new PostDaliyResponse();
 
@@ -185,7 +226,13 @@ public class UserController {
                 dailyRecord.setUserId(confrimDaliyRecord.getUserId());
                 dailyRecord.setDateTime(TimeUntil.getDateTime());
                 dailyRecord.setDRId(MD5CodeCeator.randomUUID());
-                response.setData(postDaliyResponse);
+                boolean b = dailyRecordService.insertDailyRecord(dailyRecord);
+                if(b){
+                    response.setData(postDaliyResponse);
+                }else {
+                    throw new MyException("发布失败");
+                }
+
             }else {
                 throw new MyException("服务器：登录失效");
             }
@@ -199,6 +246,90 @@ public class UserController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/getDailyRecord")
+    public BaseResponse<GetDailyRecordResponse> getDailyRecord(GetUserDailyRecordParam getUserDailyRecordParam){
+        BaseResponse<GetDailyRecordResponse> response = new BaseResponse<>();
+        GetDailyRecordResponse getDailyRecordResponse = new GetDailyRecordResponse();
 
+        try {
+
+            List<UserDailyRecordItem> query = dailyRecordService.query(getUserDailyRecordParam.getUserId(),
+                    Integer.valueOf(getUserDailyRecordParam.getPerPagerCount()),
+                    Integer.valueOf(getUserDailyRecordParam.getCurrentPager()));
+            getDailyRecordResponse.setDailyRecordItemList(query);
+            if(query.size() < Integer.valueOf(getUserDailyRecordParam.getPerPagerCount())){
+                getDailyRecordResponse.setHasMore(false);
+            }else {
+                getDailyRecordResponse.setHasMore(true);
+            }
+            response.setData(getDailyRecordResponse);
+
+        }catch (MyException e){
+            response.setErrorMsg(e.getMessage());
+        }catch (Exception e){
+            response.setErrorMsg("服务器出错");
+        }finally {
+            return response;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateBg")
+    public BaseResponse<UpdateUserInfoResponse> updateBg(@RequestParam("info") String json, @RequestParam("file") MultipartFile file){
+        BaseResponse<UpdateUserInfoResponse> response = new BaseResponse<>();
+      //  UpdateUserInfoResponse upLoadPicResponse = new UpdateUserInfoResponse();
+        try {
+            if (TextUtil.isEmpty(json)){
+                throw new MyException("服务器：信息错误");
+            }
+
+            UpdateHeadImgParam upLoadPicParam = new Gson().fromJson(json, UpdateHeadImgParam.class);
+
+          //  if (!userService.checkToken(upLoadPicParam.getUserId(), upLoadPicParam.getUserToken())){
+            //    throw new MyException("服务器：非法操作");
+          //  }
+            String imgName = userService.uploadBgImg(file, upLoadPicParam.getUserId());
+            boolean b = userService.updateBgImg(upLoadPicParam.getUserId(), imgName);
+            if(!b){
+                throw new MyException("服务器：修改失败");
+            }
+        }catch (MyException e){
+            response.setErrorMsg(e.getMessage());
+        }catch (Exception e){
+            response.setErrorMsg("服务器出错");
+        }finally {
+            return response;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateHeadImg")
+    public BaseResponse<UpdateUserInfoResponse> updateHeadImg(@RequestParam("info") String json, @RequestParam("file") MultipartFile file){
+        BaseResponse<UpdateUserInfoResponse> response = new BaseResponse<>();
+        //  UpdateUserInfoResponse upLoadPicResponse = new UpdateUserInfoResponse();
+        try {
+            if (TextUtil.isEmpty(json)){
+                throw new MyException("服务器：信息错误");
+            }
+
+            UpdateHeadImgParam upLoadPicParam = new Gson().fromJson(json, UpdateHeadImgParam.class);
+
+            if (!userService.checkToken(upLoadPicParam.getUserId(), upLoadPicParam.getUserToken())){
+                throw new MyException("服务器：非法操作");
+            }
+            String imgName = userService.uploadHeadImg(file, upLoadPicParam.getUserId());
+            boolean b = userService.updateHeadImg(upLoadPicParam.getUserId(), imgName);
+            if(!b){
+                throw new MyException("服务器：修改失败");
+            }
+        }catch (MyException e){
+            response.setErrorMsg(e.getMessage());
+        }catch (Exception e){
+            response.setErrorMsg("服务器出错");
+        }finally {
+            return response;
+        }
+    }
 
 }

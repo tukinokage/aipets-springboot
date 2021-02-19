@@ -7,7 +7,6 @@ import com.shay.aipets.entity.GetPostConditions;
 import com.shay.aipets.entity.Post;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +17,7 @@ public interface PostMapper {
     int insert(DataTablePost dataTablePost);
     List<BBSPost> query(GetPostConditions conditions);
     List<Post> getPostListByPId(@Param("postList")String postId);
+    int queryNum(GetPostConditions getPostConditions);
 
     //图片
     List<String> getPostPic(@Param("postId") String postId);

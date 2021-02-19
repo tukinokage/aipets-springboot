@@ -4,8 +4,12 @@ import com.shay.aipets.app.AuthorizationInterceptor;
 import com.shay.aipets.dto.Background;
 import com.shay.aipets.dto.HeadImg;
 import com.shay.aipets.dto.User;
+import com.shay.aipets.entity.GetPostConditions;
+import com.shay.aipets.entity.UserInfo;
 import com.shay.aipets.entity.responsedata.CheckPhoneRepData;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
+import com.shay.aipets.mapper.DaillyRecordMapper;
+import com.shay.aipets.mapper.PostMapper;
 import com.shay.aipets.mapper.UserMapper;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.redis.redisCache.RedisUtil;
@@ -19,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.soap.Text;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -38,6 +44,10 @@ public class UserServiceImpl implements UserService {
     RedisUtil redisUtil;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    DaillyRecordMapper daillyRecordMapper;
+    @Autowired
+    PostMapper postMapper;
 
     /**@return token str
      *  AuthorizationInterceptor.TOKEN_EXPIRE_TIME 为默认缓存存活时间
@@ -141,6 +151,14 @@ public class UserServiceImpl implements UserService {
         if(insert > 0){
             Boolean a = redisUtil.set(token, ruser.getUserId(), AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
             Boolean b = redisUtil.set(ruser.getUserId(), token, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
+
+            //初始化头像和背景
+            Background background = new Background();
+            HeadImg headImg = new HeadImg();
+            background.setUserId(ruser.getUserId());
+            headImg.setUserId(ruser.getUserId());
+            userMapper.insertBackGroundName(background);
+            userMapper.insertHeadImgName(headImg);
 
             CheckPhoneRepData checkPhoneRepData = new CheckPhoneRepData();
             checkPhoneRepData.setUserType(0);
@@ -269,6 +287,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserInfo getUserInfoById(String id) throws Exception {
+        UserInfo userInfo = new UserInfo();
+        User user = this.getUserById(id);
+        String bgName = this.getBgImgName(id);
+        String headImgName = this.getHeadImgName(id);
+        GetPostConditions postConditions = new GetPostConditions();
+        postConditions.setSearchUid(id);
+        int DRNum = daillyRecordMapper.queryNum(id);
+        int postNum = postMapper.queryNum(postConditions);
+
+        userInfo.setUserName(user.getUserName());
+        userInfo.setUserSign(user.getSign());
+        userInfo.setBgPicName(bgName);
+        userInfo.setHeadPicName(headImgName);
+        userInfo.setPostNum(String.valueOf(postNum));
+        userInfo.setDailyNum(String.valueOf(DRNum));
+        userInfo.setSex(user.getSex());
+        return userInfo;
+    }
+
+    @Override
     public User getUserByName(String name) throws Exception{
         User quser  = new User();
         List<User>  users= userMapper.query(quser);
@@ -313,8 +352,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String uploadHeadImg(MultipartFile file) throws Exception {
-        return null;
+    public String uploadHeadImg(MultipartFile file, String userId) throws Exception {
+
+        if(file.isEmpty()){
+            throw new MyException("服务器：文件为空");
+        }else {
+            String fileName = file.getOriginalFilename();  // 原文件名
+            String suffixName = fileName.substring(fileName.lastIndexOf("."));
+            String newFileName = userId + suffixName;
+            File dest = new File( fileRootPath + userHeadPath + newFileName);
+
+
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+            }else {
+                if (dest.exists()) {
+                    dest.delete();
+                }
+            }
+
+
+            try {
+                file.transferTo(dest);
+                return newFileName;
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new MyException("图片上传保存失败");
+            }
+        }
     }
 
     @Override
@@ -327,8 +392,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String uploadBgImg(MultipartFile file) throws Exception {
-        return null;
+    public String uploadBgImg(MultipartFile file, String userId ) throws Exception {
+        if(file.isEmpty()){
+            throw new MyException("服务器：文件为空");
+        }else {
+            String fileName = file.getOriginalFilename();  // 原文件名
+            String suffixName = fileName.substring(fileName.lastIndexOf("."));
+            String newFileName = "BG" + userId + suffixName;
+            File dest = new File( fileRootPath + userBgPath + newFileName);
+
+
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+            }else {
+                if (dest.exists()) {
+                    dest.delete();
+                }
+            }
+
+            try {
+                file.transferTo(dest);
+                return newFileName;
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new MyException("图片上传保存失败");
+            }
+        }
     }
 
 
