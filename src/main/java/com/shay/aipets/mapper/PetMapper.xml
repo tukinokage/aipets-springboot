@@ -3,7 +3,7 @@
 <mapper namespace="com.shay.aipets.mapper.PetMapper">
     <resultMap type="com.shay.aipets.dto.Pet" id="PetMap">
         <result property="petId" column="petId" jdbcType="VARCHAR"/>
-        <result property="petName" column="userName" jdbcType="VARCHAR"/>
+        <result property="petName" column="petName" jdbcType="VARCHAR"/>
         <result property="petEnglishName" column="petEnglishName" jdbcType="VARCHAR"/>
         <result property="femaleWeight" column="femaleWeight" jdbcType="VARCHAR"/>
         <result property="maleWeight" column="maleWeight" jdbcType="VARCHAR"/>
@@ -71,17 +71,17 @@
         from (select * from pet
         <where>
             <if test="shapeLevel != null and shapeLevel != ''">
-                <if test="shapeLevel == 0">
+                <if test="shapeLevel != 0">
                     and pet.shapeLevel = #{shapeLevel}
                 </if>
             </if>
             <if test="fetchLevel != null and fetchLevel != ''">
-                <if test="fetchLevel == 0">
+                <if test="fetchLevel != 0">
                     and pet.fetchLevel = #{fetchLevel}
                 </if>
             </if>
             <if test="petClass != null and petClass != ''">
-                <if test="petClass == 0">
+                <if test="petClass != 0">
                     and pet.petClass = #{petClass}
                 </if>
             </if>
@@ -119,22 +119,22 @@
         from (select * from pet
         <where>
             <if test="shapeLevel != null and shapeLevel != ''">
-                <if test="shapeLevel == 0">
+                <if test="shapeLevel != 0">
                     and pet.shapeLevel = #{shapeLevel}
                 </if>
             </if>
             <if test="fetchLevel != null and fetchLevel != ''">
-                <if test="fetchLevel == 0">
+                <if test="fetchLevel != 0">
                     and pet.fetchLevel = #{fetchLevel}
                 </if>
             </if>
             <if test="petClass != null and petClass != ''">
-                <if test="petClass == 0">
+                <if test="petClass != 0">
                     and pet.petClass = #{petClass}
                 </if>
             </if>
         </where>
-        limit #{startNum}, #{endNum}
+        )limit #{startNum}, #{endNum}
     </select>
 
     <!--查询信息图片-单个名称-全部-->

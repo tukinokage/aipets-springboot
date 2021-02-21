@@ -10,6 +10,7 @@ import com.shay.aipets.entity.Store;
 import com.shay.aipets.entity.response.BaseResponse;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.services.PetService;
+import com.shay.aipets.utils.TimeUntil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -39,16 +40,22 @@ public class PetController {
         }
 
         try {
+            Float fetchLevel = Float.valueOf(loadPetCondition.getFetchLevel());
+            Float petClass =Float.valueOf(loadPetCondition.getPetClass());
+            Float shapeLevel = Float.valueOf(loadPetCondition.getShapeLevel());
+            Float rankType =Float.valueOf( loadPetCondition.getRankType());
+            Float per =Float.valueOf(loadPetCondition.getPerPageCount());
+            Float current =Float.valueOf(loadPetCondition.getCurrentPageNum());
             List<Pet> petList = petService.getPetListByCondition(
-                    loadPetCondition.getFetchLevel(),
-                    loadPetCondition.getPetClass(),
-                    loadPetCondition.getShapeLevel(),
-                    loadPetCondition.getRankType(),
-                    loadPetCondition.getPerPageCount(),
-                    loadPetCondition.getCurrentPageNum());
-            if(petList.size() == 0){
+                    fetchLevel.intValue(),
+                    petClass.intValue(),
+                    shapeLevel.intValue(),
+                    rankType.intValue(),
+                    per.intValue(),
+                    current.intValue());
+            /*if(petList.size() == 0){
                 throw new MyException("来自服务器：没有数据");
-            }
+            }*/
             response.setData(petList);
 
         }catch (MyException e){
@@ -79,6 +86,18 @@ public class PetController {
             Pet pet = new Pet();
             pet.setPetId(loadPetIntroductionCondition.getPetId());
             PetIntroduce petIntroduce = petService.getPetIntroduce(pet);
+            new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        int viewNum = petService.getPetTodayViewNum(loadPetIntroductionCondition.getPetId(), TimeUntil.getDate());
+                        petService.updatePetViewNum(loadPetIntroductionCondition.getPetId(), viewNum +1, TimeUntil.getDate());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+
             response.setData(petIntroduce);
         }catch (MyException e){
             response.setErrorMsg(e.getMessage());

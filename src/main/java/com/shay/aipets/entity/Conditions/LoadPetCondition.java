@@ -3,60 +3,58 @@ package com.shay.aipets.entity.Conditions;
 import java.io.Serializable;
 
 public class LoadPetCondition implements Serializable {
-    int shapeLevel;
-    int fetchLevel;
-    int rankType;
-    int petClass;
-    int perPageCount;
-    int currentPageNum;
+    String shapeLevel;
+    String fetchLevel;
+    String rankType;
+    String petClass;
+    String perPageCount;
+    String currentPageNum;
 
-    public int getPerPageCount() {
-        return perPageCount;
-    }
-
-    public void setPerPageCount(int perPageCount) {
-        this.perPageCount = perPageCount;
-    }
-
-    public int getCurrentPageNum() {
-        return currentPageNum;
-    }
-
-    public void setCurrentPageNum(int currentPageNum) {
-        this.currentPageNum = currentPageNum;
-    }
-
-    public int getShapeLevel() {
+    public String getShapeLevel() {
         return shapeLevel;
     }
 
-    public void setShapeLevel(int shapeLevel) {
+    public void setShapeLevel(String shapeLevel) {
         this.shapeLevel = shapeLevel;
     }
 
-    public int getFetchLevel() {
+    public String getFetchLevel() {
         return fetchLevel;
     }
 
-    public void setFetchLevel(int fetchLevel) {
+    public void setFetchLevel(String fetchLevel) {
         this.fetchLevel = fetchLevel;
     }
 
-    public int getRankType() {
+    public String getRankType() {
         return rankType;
     }
 
-    public void setRankType(int rankType) {
+    public void setRankType(String rankType) {
         this.rankType = rankType;
     }
 
-    public int getPetClass() {
+    public String getPetClass() {
         return petClass;
     }
 
-    public void setPetClass(int petClass) {
+    public void setPetClass(String petClass) {
         this.petClass = petClass;
     }
 
+    public String getPerPageCount() {
+        return perPageCount;
+    }
 
+    public void setPerPageCount(String perPageCount) {
+        this.perPageCount = perPageCount;
+    }
+
+    public String getCurrentPageNum() {
+        return currentPageNum;
+    }
+
+    public void setCurrentPageNum(String currentPageNum) {
+        this.currentPageNum = currentPageNum;
+    }
 }
