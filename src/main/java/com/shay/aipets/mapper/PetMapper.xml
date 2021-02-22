@@ -37,6 +37,10 @@
         <result property="petAttention" column="petAttention" jdbcType="VARCHAR"/>
         <result property="headImgName" column="headImgName" jdbcType="VARCHAR"/>
     </resultMap>
+    <resultMap type="com.shay.aipets.dto.PetPic" id="PetPicMap">
+        <result property="petId" column="petId" jdbcType="VARCHAR"/>
+        <result property="picName" column="picName" jdbcType="VARCHAR"/>
+    </resultMap>
 
     <!--查询信息-单个-多个-全部-->
     <select id="query"  parameterType="com.shay.aipets.dto.Pet"  resultMap="PetMap">
@@ -138,13 +142,13 @@
     </select>
 
     <!--查询信息图片-单个名称-全部-->
-    <select id="getPetPic"  parameterType="com.shay.aipets.dto.Background"  resultType="java.lang.String">
+    <select id="getPetPic"  parameterType="com.shay.aipets.dto.Background"  resultMap="PetPicMap">
         select
-        bgImgName
-        from background
+        *
+        from petpic
         <where>
-            <if test="userId != null and userId != ''">
-                and userId = #{userId}
+            <if test="petId != null and petId != ''">
+                and petId = #{petId}
             </if>
         </where>
     </select>

@@ -52,7 +52,9 @@ public class CommentServiceImpl implements CommentService {
         for(int i = 0; i < picList.size(); i++){
             CommentPic commentPic = new CommentPic();
             commentPic.setCommentId(commentId);
-            commentPic.setPicName(picList.get(i));
+            String picName = picList.get(i).replace("[", "");
+            picName = picName.replace("]", "");
+            commentPic.setPicName(picName);
             commentMapper.insertPic(commentPic);
         }
 

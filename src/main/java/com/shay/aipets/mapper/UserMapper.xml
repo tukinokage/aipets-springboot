@@ -158,7 +158,7 @@
     </insert>
 
     <delete id="unStarPet" >
-        delete from starpet where userId = #{uerId} and #{petId}
+        delete from starpet where userId = #{userId} and petId = #{petId}
     </delete>
 
 

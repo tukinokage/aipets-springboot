@@ -1,20 +1,20 @@
 package com.shay.aipets.dto;
 
+
 import java.io.Serializable;
 
-public class Pet implements Serializable {
-
+public class Pet implements  Serializable {
+    int petClass;
     private String petId;
     private String petHeadImg;
     private String petName;
     private String petEnglishName;
     private String femaleWeight;
     private String maleWeight;
-    private int viewNum;
     private String originPlace;
     private int fetchLevel;
     private int shapeLevel;
-    int petClass;
+    private int viewNum;
 
     public int getFetchLevel() {
         return fetchLevel;
@@ -104,4 +104,6 @@ public class Pet implements Serializable {
     public void setOriginPlace(String originPlace) {
         this.originPlace = originPlace;
     }
+
+
 }

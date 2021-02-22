@@ -5,18 +5,18 @@
         <result property="postId" column="postId" jdbcType="VARCHAR"/>
         <result property="commentId" column="commentId" jdbcType="VARCHAR"/>
         <result property="userId" column="userId" jdbcType="VARCHAR"/>
-        <result property="contextText" column="contextText" jdbcType="VARCHAR"/>
+        <result property="contentText" column="contentText" jdbcType="VARCHAR"/>
         <result property="dateTime" column="dateTime" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <resultMap type="com.shay.aipets.dto.Comment" id="CommentPicMap">
+    <resultMap type="com.shay.aipets.dto.CommentPic" id="CommentPicMap">
         <result property="postId" column="postId" jdbcType="VARCHAR"/>
         <result property="title" column="title" jdbcType="VARCHAR"/>
     </resultMap>
 
     <insert id="insert" parameterType="com.shay.aipets.dto.Comment">
         insert into comment(commentId, postId, userId, contentText , dateTime)
-        values (#{commentId}, #{postId}, #{userId}, #{contextText} , #{dateTime})
+        values (#{commentId}, #{postId}, #{userId}, #{contentText} , #{dateTime})
     </insert>
 
     <insert id="insertPic" parameterType="com.shay.aipets.dto.CommentPic">

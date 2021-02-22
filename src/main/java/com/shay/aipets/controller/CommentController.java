@@ -49,6 +49,7 @@ public class CommentController {
         }catch (MyException e){
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -62,20 +63,22 @@ public class CommentController {
         CommitCommentResponse commitCommentResponse = new CommitCommentResponse();
         try {
             String commentText = commitCommentParam.getCommentText();
-            List<Picture> picList = commitCommentParam.getPicList();
+
             String postId = commitCommentParam.getPostId();
             String userId = commitCommentParam.getUserId();
             String token = commitCommentParam.getToken();
             if(!userService.checkToken(userId, token)){
                 throw new MyException("登录失效");
             }
-
+            List<String> picList = commitCommentParam.getPicList();
             List<String> picNameList = new ArrayList<>();
-            for(Picture pic:picList){
-                picNameList.add(pic.getPicName());
+            if(picList != null){
+                picNameList = picList;
             }
+
             commentService.insertComment(userId, postId, commentText, picNameList);
         } catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         } catch (Exception e){
             e.printStackTrace();
@@ -93,6 +96,7 @@ public class CommentController {
       UpLoadPicResponse upLoadPicResponse  = new UpLoadPicResponse();
         try {
             if (TextUtil.isEmpty(json)){
+
                 throw new MyException("服务器：信息错误");
             }
 
@@ -100,6 +104,7 @@ public class CommentController {
             String token = upLoadPicParam.getToken();
             String userId = upLoadPicParam.getUserId();
             if(!userService.checkToken(userId, token)){
+
                 throw new MyException("登录失效");
             }
 
@@ -108,8 +113,10 @@ public class CommentController {
             upLoadPicResponse.setIndex(upLoadPicParam.getIndex());
             response.setData(upLoadPicResponse);
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;

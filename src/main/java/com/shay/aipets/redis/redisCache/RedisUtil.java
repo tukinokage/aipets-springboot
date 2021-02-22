@@ -4,9 +4,11 @@ import com.shay.aipets.enums.timeenum.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,8 @@ public class RedisUtil {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    @Resource(name = "stringRedisTemplate")
+    private StringRedisTemplate stringRedisTemplate;
 
     public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -83,7 +87,7 @@ public class RedisUtil {
         }
     }
 
-    //============================String=============================
+
     /**
      * 普通缓存获取
      * @param key 键
@@ -91,6 +95,16 @@ public class RedisUtil {
      */
     public Object get(String key){
         return key==null?null:redisTemplate.opsForValue().get(key);
+    }
+
+    //============================String=============================
+    /**
+     * String缓存获取
+     * @param key 键
+     * @return 值
+     */
+    public String getString(String key){
+        return key==null?null: stringRedisTemplate.opsForValue().get(key);
     }
 
     /**

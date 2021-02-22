@@ -16,7 +16,7 @@ import java.util.List;
 public interface PostMapper {
     int insert(DataTablePost dataTablePost);
     List<BBSPost> query(GetPostConditions conditions);
-    List<Post> getPostListByPId(@Param("postList")String postId);
+    List<Post> getPostListByPId(@Param("postId")String postId);
     int queryNum(GetPostConditions getPostConditions);
 
     //图片

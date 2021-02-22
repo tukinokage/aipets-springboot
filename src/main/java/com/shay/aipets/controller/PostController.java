@@ -43,21 +43,25 @@ public class PostController {
         GetPostListResponse getPostListResponse = new GetPostListResponse();
         try {
             List<BBSPost> posts =new ArrayList<>();
+            Float currentNum =   Float.valueOf(getPostListParam.getCurrentPaperNum());
+            Float perNum =  Float.valueOf(getPostListParam.getPerPaperNum());
+            Float type =  Float.valueOf(getPostListParam.getType());
+
             if(!TextUtil.isEmpty(getPostListParam.getSearchCondition())){
                 posts = postService.getPostListBySearch(
                         getPostListParam.getSearchCondition(),
-                        getPostListParam.getPerPaperNum(),
-                        getPostListParam.getCurrentPaperNum());
+                        perNum.intValue(),
+                        currentNum.intValue());
             }else  if(!TextUtil.isEmpty(getPostListParam.getSearchUid())){
                 posts = postService.getPostListByUid(
                         getPostListParam.getSearchUid(),
-                        getPostListParam.getPerPaperNum(),
-                        getPostListParam.getCurrentPaperNum());
+                        perNum.intValue(),
+                        currentNum.intValue());
             }else if(!TextUtil.isEmpty(String.valueOf(getPostListParam.getType()))){
                 posts = postService.getPostListByType(
-                        getPostListParam.getType(),
-                        getPostListParam.getPerPaperNum(),
-                        getPostListParam.getCurrentPaperNum());
+                        type.intValue(),
+                        perNum.intValue(),
+                        currentNum.intValue());
             }
 
             for(int i = 0; i < posts.size(); i++){
@@ -77,6 +81,7 @@ public class PostController {
 //        }catch (MyException e){
 //            response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -93,6 +98,9 @@ public class PostController {
             String postId = getPostInfoParam.getPostId();
             Post post = postService.getPostListByPId(postId);
             List<String> postPicNameList= postService.getPostPicNameListByPostId(postId);
+            User userById = userService.getUserById(post.getUserId());
+            String userName = userById.getUserName();
+            post.setUserName(userName);
             if(!postPicNameList.isEmpty()){
                 post.setPicNameList(postPicNameList);
             }
@@ -102,6 +110,7 @@ public class PostController {
        /*} catch (MyException e){
             response.setErrorMsg(e.getMessage());*/
         } catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         } finally {
             return response;
@@ -138,6 +147,7 @@ public class PostController {
         }catch (MyException e){
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -174,6 +184,7 @@ public class PostController {
             response.setErrorMsg(e.getMessage());*/
 
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;

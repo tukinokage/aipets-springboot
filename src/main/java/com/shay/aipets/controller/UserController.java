@@ -62,6 +62,7 @@ public class UserController {
         }catch (MyException e){
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -79,6 +80,7 @@ public class UserController {
         } catch (MyException e){
             response.setErrorMsg(e.getMessage());
         } catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         } finally {
             return response;
@@ -114,6 +116,7 @@ public class UserController {
         }catch (MyException e){
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;

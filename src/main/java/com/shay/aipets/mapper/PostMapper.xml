@@ -3,7 +3,7 @@
 <mapper namespace="com.shay.aipets.mapper.PostMapper">
     <resultMap type="com.shay.aipets.entity.Post" id="PostMap">
         <result property="postId" column="postId" jdbcType="VARCHAR"/>
-        <result property="userId" column="v" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="VARCHAR"/>
         <result property="title" column="title" jdbcType="VARCHAR"/>
         <result property="contextText" column="contextText" jdbcType="VARCHAR"/>
         <result property="dateTime" column="dateTime" jdbcType="VARCHAR"/>
@@ -28,16 +28,20 @@
         from post
         <where>
             <if test="type != null">
-                and type = #{type}
+                <if test="type != 0">
+                    and type = #{type}
+                </if>
             </if>
             <if test="searchUid != null and searchUid != ''">
                 and userId = #{searchUid}
             </if>
             <if test="searchCondition != null">
-                and searchCondition like concat('%', #{searchCondition}, '%')
+                and title like concat('%', #{searchCondition}, '%')
             </if>
         </where>
-        limit #{startPaperNum}, #{endPaperNum}
+        order by dateTime desc
+            limit #{startPaperNum}, #{endPaperNum}
+
     </select>
 
     <!--查询SHULIANG-单个-多个-全部-->
@@ -51,7 +55,7 @@
                 and userId = #{searchUid}
             </if>
             <if test="searchCondition != null">
-                and searchCondition like concat('%', #{searchCondition}, '%')
+                and title like concat('%', #{searchCondition}, '%')
             </if>
         </where>
         limit #{startPaperNum}, #{endPaperNum}

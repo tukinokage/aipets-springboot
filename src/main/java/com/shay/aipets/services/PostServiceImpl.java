@@ -78,9 +78,11 @@ public class PostServiceImpl implements PostService {
         String postId = dataTablePost.getPostId();
         PostPic postPic = new PostPic();
         postPic.setPostId(postId);
-        for(Picture pic: pictures){
-            postPic.setPicName(pic.getPicName());
-            postMapper.savePostPic(postPic);
+        if(pictures != null){
+            for(Picture pic: pictures){
+                postPic.setPicName(pic.getPicName());
+                postMapper.savePostPic(postPic);
+            }
         }
 
         return true;
@@ -95,7 +97,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BBSPost> getPostListByUid(String uid, int perPaperNum, int currentPaperNum) throws Exception {
         GetPostConditions conditions = new GetPostConditions();
-        int start = currentPaperNum * perPaperNum - 1;
+        int start = (currentPaperNum- 1) * perPaperNum ;
         int end = start + perPaperNum ;
         conditions.setEndPaperNum(end);
         conditions.setStartPaperNum(start);
@@ -106,7 +108,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BBSPost> getPostListByType(int type, int perPaperNum, int currentPaperNum) throws Exception {
         GetPostConditions conditions = new GetPostConditions();
-        int start = currentPaperNum * perPaperNum - 1;
+        int start = (currentPaperNum- 1) * perPaperNum ;
         int end = start + perPaperNum ;
         conditions.setEndPaperNum(end);
         conditions.setStartPaperNum(start);
@@ -117,7 +119,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BBSPost> getPostListBySearch(String searchCondition, int perPaperNum, int currentPaperNum) throws Exception {
         GetPostConditions conditions = new GetPostConditions();
-        int start = currentPaperNum * perPaperNum - 1;
+        int start = (currentPaperNum- 1) * perPaperNum ;
         int end = start + perPaperNum ;
         conditions.setEndPaperNum(end);
         conditions.setStartPaperNum(start);

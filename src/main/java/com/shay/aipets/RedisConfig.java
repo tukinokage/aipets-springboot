@@ -58,6 +58,12 @@ public class RedisConfig extends CachingConfigurerSupport {
         return template;
     }
 
+    @Bean(name = "stringRedisTemplate")
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory
+                                                           redisConnectionFactory){
+        return new StringRedisTemplate(redisConnectionFactory);
+    }
+
     /**
      * 对hash类型的数据操作
      *

@@ -184,7 +184,7 @@ public class UserServiceImpl implements UserService {
             //清除上次的token 键记录
             String id = resultUser.getUserId();
 
-            String oldToken = (String) redisUtil.get(id);
+            String oldToken = redisUtil.getString(id);
             if (oldToken != null && !oldToken.equals("")){
                 redisUtil.del(oldToken);
             }
@@ -248,8 +248,8 @@ public class UserServiceImpl implements UserService {
             throw new MyException("服务器通知：获取参数错误");
         }
 
-        String rtoken = (String) redisUtil.get(userId);
-        String ruid = (String) redisUtil.get(token);
+        String rtoken = redisUtil.getString(userId);
+        String ruid =  redisUtil.getString(token);
         if(token.equals(rtoken) &&  userId.equals(ruid)) {
             return true;
         }else {
@@ -455,13 +455,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean starPet(String petId, String userId) throws Exception {
-        boolean b = userMapper.starPet( petId, userId);
+        boolean b = userMapper.starPet( userId, petId);
         return b;
     }
 
     @Override
     public boolean unStarPet(String petId, String userId) throws Exception {
-        boolean b = userMapper.unStarPet(petId, userId);
+        boolean b = userMapper.unStarPet(userId, petId);
         return b;
     }
 
