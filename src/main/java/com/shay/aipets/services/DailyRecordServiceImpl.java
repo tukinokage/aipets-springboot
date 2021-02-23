@@ -25,7 +25,7 @@ public class DailyRecordServiceImpl implements DailyRecordService{
 
     @Override
     public List<UserDailyRecordItem> query(String userId, int perPaperNum, int currentPaperNum) throws Exception {
-        int start = currentPaperNum * perPaperNum - 1;
+        int start = (currentPaperNum- 1)* perPaperNum ;
         int end = start + perPaperNum ;
         return daillyRecordMapper.query(userId, start, end);
     }

@@ -9,7 +9,6 @@ import com.shay.aipets.entity.Post;
 import com.shay.aipets.entity.params.GetPostListParam;
 import com.shay.aipets.mapper.PostMapper;
 import com.shay.aipets.myexceptions.MyException;
-import com.shay.aipets.utils.FileUrIUtil;
 import com.shay.aipets.utils.MD5CodeCeator;
 import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +79,7 @@ public class PostServiceImpl implements PostService {
         postPic.setPostId(postId);
         if(pictures != null){
             for(Picture pic: pictures){
+
                 postPic.setPicName(pic.getPicName());
                 postMapper.savePostPic(postPic);
             }

@@ -17,14 +17,15 @@ public interface UserMapper {
     boolean update(User user);
 
     //图片
-    String getHeadImgName(HeadImg headImg);
+    List<String> getHeadImgName(HeadImg headImg);
     boolean setHeadImgName(HeadImg headImg);
     boolean insertHeadImgName(HeadImg headImg);
-    String getBackGroundName(Background background);
+    List<String> getBackGroundName(Background background);
     boolean setBackGroundName(Background background);
     boolean insertBackGroundName(Background background);
 
     int queryStarPetNum(@Param("userId") String userId, @Param("petId") String petId);
+    List<String> queryStarPetId(@Param("userId") String userId, @Param("startNum") int start, @Param("endNum") int end);
     boolean starPet(@Param("userId") String userId, @Param("petId") String petId);
     boolean unStarPet(@Param("userId") String userId, @Param("petId") String petId);
 }

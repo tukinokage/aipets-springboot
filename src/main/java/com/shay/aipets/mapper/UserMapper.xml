@@ -4,6 +4,7 @@
     <resultMap type="com.shay.aipets.dto.User" id="UserMap">
         <result property="userId" column="userId" jdbcType="VARCHAR"/>
         <result property="userName" column="userName" jdbcType="VARCHAR"/>
+        <result property="sign" column="userSign" jdbcType="VARCHAR"/>
         <result property="phoneNum" column="phoneNum" jdbcType="VARCHAR"/>
         <result property="passWord" column="passWord" jdbcType="VARCHAR"/>
         <result property="wbId" column="wbId" jdbcType="VARCHAR"/>
@@ -12,8 +13,8 @@
     </resultMap>
 
     <insert id="insert" parameterType="com.shay.aipets.dto.User">
-        insert into User(userName, userId, sex , passWord, wbId, phoneNum)
-        values (#{userName}, #{userId}, #{sex}, #{passWord} , #{wbId}, #{phoneNum})
+        insert into User(userName, userId, sex , passWord, wbId, phoneNum, userSign)
+        values (#{userName}, #{userId}, #{sex}, #{passWord} , #{wbId}, #{phoneNum}, #{sign})
     </insert>
 
 
@@ -101,7 +102,7 @@
                 passWord = #{passWord},
             </if>
             <if test="sign != null">
-                sign = #{sign},
+                userSign = #{sign},
             </if>
             <if test="sex != null">
                 sex = #{sex},
@@ -151,6 +152,13 @@
         from starpet
 
         where userId = #{userId} and petId = #{petId}
+    </select>
+
+    <select id="queryStarPetId" resultType="java.lang.String"  >
+        select petId
+        from starpet
+        where userId = #{userId}
+        limit #{startNum},#{endNum}
     </select>
 
     <insert id="starPet" >

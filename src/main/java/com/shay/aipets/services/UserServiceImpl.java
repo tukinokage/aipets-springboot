@@ -3,12 +3,14 @@ package com.shay.aipets.services;
 import com.shay.aipets.app.AuthorizationInterceptor;
 import com.shay.aipets.dto.Background;
 import com.shay.aipets.dto.HeadImg;
+import com.shay.aipets.dto.Pet;
 import com.shay.aipets.dto.User;
 import com.shay.aipets.entity.GetPostConditions;
 import com.shay.aipets.entity.UserInfo;
 import com.shay.aipets.entity.responsedata.CheckPhoneRepData;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
 import com.shay.aipets.mapper.DaillyRecordMapper;
+import com.shay.aipets.mapper.PetMapper;
 import com.shay.aipets.mapper.PostMapper;
 import com.shay.aipets.mapper.UserMapper;
 import com.shay.aipets.myexceptions.MyException;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.xml.soap.Text;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -48,6 +51,8 @@ public class UserServiceImpl implements UserService {
     DaillyRecordMapper daillyRecordMapper;
     @Autowired
     PostMapper postMapper;
+    @Autowired
+    PetMapper petMapper;
 
     /**@return token str
      *  AuthorizationInterceptor.TOKEN_EXPIRE_TIME 为默认缓存存活时间
@@ -105,7 +110,7 @@ public class UserServiceImpl implements UserService {
         }
 
         //如果 key 不存在时，id = null
-        String id = (String) redisUtil.get(token);
+        String id = redisUtil.getString(token);
         //更新存活时间
         if(id != null){
             redisUtil.expire(token, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
@@ -425,16 +430,28 @@ public class UserServiceImpl implements UserService {
     public String getHeadImgName(String userId) throws Exception {
         HeadImg headImg = new HeadImg();
         headImg.setUserId(userId);
-        String s = userMapper.getHeadImgName(headImg);
-        return s;
+
+        List<String> stringList = userMapper.getHeadImgName(headImg);
+        if(stringList.isEmpty()){
+            return "";
+        }else {
+            String s = stringList.get(0);
+            return s;
+        }
+
     }
 
     @Override
     public String getBgImgName(String userId) throws Exception {
         Background background = new Background();
         background.setUserId(userId);
-        String s = userMapper.getBackGroundName(background);
-        return s;
+        List<String> stringList = userMapper.getBackGroundName(background);
+        if(stringList.isEmpty()){
+            return "";
+        }else {
+            String s = stringList.get(0);
+            return s;
+        }
     }
 
     @Override
@@ -463,6 +480,26 @@ public class UserServiceImpl implements UserService {
     public boolean unStarPet(String petId, String userId) throws Exception {
         boolean b = userMapper.unStarPet(userId, petId);
         return b;
+    }
+
+    @Override
+    public List<Pet> getStartPet(String userId, int perPagerNum, int currentPagerNum) throws Exception {
+        int starNum = (currentPagerNum -1) *perPagerNum ;
+        int endNum = starNum + perPagerNum;
+        List<String> list = userMapper.queryStarPetId(userId, starNum, endNum);
+        if(list.isEmpty()){
+            throw new MyException("没有收藏哦");
+        }
+        List<Pet> petList = new ArrayList<>();
+
+        for (String petId:
+             list) {
+            Pet qPet = new Pet();
+            qPet.setPetId(petId);
+            petList.addAll(petMapper.query(qPet));
+        }
+
+        return petList;
     }
 
 

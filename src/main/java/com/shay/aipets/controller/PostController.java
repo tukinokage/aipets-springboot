@@ -174,7 +174,7 @@ public class PostController {
                 dataTablePost.setDateTime(TimeUntil.getDateTime());
                 dataTablePost.setPostId(MD5CodeCeator.randomUUID());
                 dataTablePost.setTitle(postParam.getTitle());
-                dataTablePost.setType(postParam.getType());
+                dataTablePost.setType(Integer.valueOf(postParam.getType()));
                 dataTablePost.setUserId(postParam.getUserId());
                 postService.insertPost(dataTablePost, postParam.getPicList());
             }else {

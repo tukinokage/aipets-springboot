@@ -2,6 +2,7 @@ package com.shay.aipets.controller;
 
 import com.google.gson.Gson;
 import com.shay.aipets.dto.DailyRecord;
+import com.shay.aipets.dto.Pet;
 import com.shay.aipets.dto.User;
 import com.shay.aipets.entity.UserCommentItem;
 import com.shay.aipets.entity.UserDailyRecordItem;
@@ -114,6 +115,7 @@ public class UserController {
                 throw new MyException("非法操作");
             }
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
             e.printStackTrace();
@@ -137,13 +139,53 @@ public class UserController {
         try {
             String userId = getUserInfoParam.getUserId();
             UserInfo userInfo = userService.getUserInfoById(userId);
+            userInfo.setUserId(userId);
             getUserInfoResponse.setUserInfo(userInfo);
 
             response.setData(getUserInfoResponse);
 
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
+            response.setErrorMsg("服务器出错");
+        }finally {
+            return response;
+        }
+    }
+
+    /**获取收藏宠物列表
+     *
+     * @return  UpdateUserInfoResponse;
+     *   通过token检查缓存中id是否与请求id相符
+     *
+     * */
+    @ResponseBody
+    @RequestMapping(value = "/getStarPetList")
+    public BaseResponse<GetStarPetListResponse> getStarPetList(GetUserPetParam getUserPetParam){
+        BaseResponse<GetStarPetListResponse> response = new BaseResponse<>();
+        GetStarPetListResponse getStarPetListResponse = new GetStarPetListResponse();
+        try {
+            String userId = getUserPetParam.getUserId();
+           int curent = Integer.parseInt(getUserPetParam.getCurrentPager());
+           int per = Integer.parseInt(getUserPetParam.getPerPagerCount());
+            List<Pet> startPet = userService.getStartPet(userId, per, curent);
+            getStarPetListResponse.setPetList(startPet);
+
+            if(startPet.size() < per){
+                getStarPetListResponse.setHasMore(false);
+            }else {
+                getStarPetListResponse.setHasMore(true);
+            }
+
+            response.setData(getStarPetListResponse);
+
+        }catch (MyException e){
+            e.printStackTrace();
+            response.setErrorMsg(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -177,8 +219,10 @@ public class UserController {
                 throw new MyException("非法操作");
             }
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -204,9 +248,11 @@ public class UserController {
                 getUserCommentResponse.setHasMore(true);
             }
             response.setData(getUserCommentResponse);
-      /*  }catch (MyException e){
-            response.setErrorMsg(e.getMessage());*/
+        }catch (MyException e){
+            e.printStackTrace();
+            response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -241,8 +287,10 @@ public class UserController {
             }
 
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -269,8 +317,10 @@ public class UserController {
             response.setData(getDailyRecordResponse);
 
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -287,19 +337,21 @@ public class UserController {
                 throw new MyException("服务器：信息错误");
             }
 
-            UpdateHeadImgParam upLoadPicParam = new Gson().fromJson(json, UpdateHeadImgParam.class);
+            UpdateBgParam updateBgParam = new Gson().fromJson(json, UpdateBgParam.class);
 
           //  if (!userService.checkToken(upLoadPicParam.getUserId(), upLoadPicParam.getUserToken())){
             //    throw new MyException("服务器：非法操作");
           //  }
-            String imgName = userService.uploadBgImg(file, upLoadPicParam.getUserId());
-            boolean b = userService.updateBgImg(upLoadPicParam.getUserId(), imgName);
+            String imgName = userService.uploadBgImg(file, updateBgParam.getUserId());
+            boolean b = userService.updateBgImg(updateBgParam.getUserId(), imgName);
             if(!b){
                 throw new MyException("服务器：修改失败");
             }
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;
@@ -327,8 +379,10 @@ public class UserController {
                 throw new MyException("服务器：修改失败");
             }
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             response.setErrorMsg("服务器出错");
         }finally {
             return response;

@@ -1,10 +1,13 @@
 package com.shay.aipets.services;
 
+import com.shay.aipets.dto.Pet;
 import com.shay.aipets.dto.User;
 import com.shay.aipets.entity.UserInfo;
 import com.shay.aipets.entity.responsedata.CheckPhoneRepData;
 import com.shay.aipets.entity.responsedata.LoginResponseData;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface UserService {
     LoginResponseData login(String name, String psw) throws Exception;
@@ -36,5 +39,6 @@ public interface UserService {
     boolean isStarPet(String petId, String userId) throws Exception;
     boolean starPet(String petId, String userId) throws Exception;
     boolean unStarPet(String petId, String userId) throws Exception;
+    List<Pet> getStartPet(String userId, int perPagerNum, int currentPagerNum) throws Exception;
 
 }

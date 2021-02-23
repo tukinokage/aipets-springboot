@@ -1,5 +1,6 @@
 package com.shay.aipets.entity.params;
 
+
 import com.shay.aipets.entity.Picture;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class PostParam {
     String contentText;
     String title;
     List<Picture> picList;
-    int type;
+    String type;
 
     public List<Picture> getPicList() {
         return picList;
@@ -20,15 +21,13 @@ public class PostParam {
         this.picList = picList;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
-
-
 
     public String getToken() {
         return token;

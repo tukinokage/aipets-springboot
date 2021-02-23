@@ -101,7 +101,15 @@ public class CommentServiceImpl implements CommentService {
             String userId = queryList.get(i).getUserId();
             HeadImg headImg = new HeadImg();
             headImg.setUserId(userId);
-            String headImgStr = userMapper.getHeadImgName(headImg);
+            List<String> stringList = userMapper.getHeadImgName(headImg);
+            String headImgStr = "";
+            if(stringList.isEmpty()){
+                headImgStr =  "";
+            }else {
+                headImgStr = stringList.get(0);
+            }
+            headImg.setHeadImgName(headImgStr);
+            userMapper.getHeadImgName(headImg);
 
             User quser = new User();
             quser.setUserId(userId);
@@ -122,7 +130,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<UserCommentItem> getCommentByUserId(String userId,  int perNum, int currentNum) throws Exception {
-        int starNum = currentNum * perNum ;
+        int starNum = (currentNum -1) *perNum ;
         int endNum = starNum + perNum;
         List<Comment> queryList = commentMapper.queryById(userId, starNum, endNum );
         List<UserCommentItem> userCommentItems = new ArrayList<>();

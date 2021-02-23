@@ -27,7 +27,7 @@
     </select>
 
     <!--查询信息-单个-多个-全部-->
-    <select id="queryNum" >
+    <select id="queryNum" resultType="java.lang.Integer">
         select
          count(*)
         from dailyrecord

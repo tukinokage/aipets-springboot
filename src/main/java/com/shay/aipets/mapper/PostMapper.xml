@@ -45,7 +45,7 @@
     </select>
 
     <!--查询SHULIANG-单个-多个-全部-->
-    <select id="queryNum"  parameterType="com.shay.aipets.entity.GetPostConditions" >
+    <select id="queryNum"  parameterType="com.shay.aipets.entity.GetPostConditions" resultType="java.lang.Integer">
         select
           count(*)
         from post
@@ -58,7 +58,6 @@
                 and title like concat('%', #{searchCondition}, '%')
             </if>
         </where>
-        limit #{startPaperNum}, #{endPaperNum}
     </select>
 
 
