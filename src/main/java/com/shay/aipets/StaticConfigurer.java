@@ -26,6 +26,10 @@ public class StaticConfigurer implements  WebMvcConfigurer {
     String petHeadPath;
     @Value("${img.ipet.path}")
     String petImgPath;
+    @Value("${img.store.path}")
+    String storeImgPath;
+    @Value("${img.hospital.path}")
+    String hospitalImgPath;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -36,6 +40,8 @@ public class StaticConfigurer implements  WebMvcConfigurer {
         registry.addResourceHandler(resRootPath + userBgPath + "**").addResourceLocations("file:" + fileRootPath + userBgPath);
         registry.addResourceHandler(resRootPath + petHeadPath + "**").addResourceLocations("file:" + fileRootPath + petHeadPath);
         registry.addResourceHandler(resRootPath + petImgPath + "**").addResourceLocations("file:" + fileRootPath + petImgPath);
+        registry.addResourceHandler(resRootPath + storeImgPath + "**").addResourceLocations("file:" + fileRootPath + storeImgPath);
+        registry.addResourceHandler(resRootPath + hospitalImgPath + "**").addResourceLocations("file:" + fileRootPath + hospitalImgPath);
 
     }
 }

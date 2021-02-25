@@ -40,7 +40,7 @@ public class PetServiceImpl implements  PetService {
         condition.setRankType(rankType);
         condition.setShapeLevel(shapeLevel);
         condition.setStartNum(perPageCount *(currentPageNum - 1) );
-        condition.setEndNum(perPageCount *currentPageNum );
+        condition.setEndNum(perPageCount * currentPageNum );
         if(rankType == 0){
             return  petMapper.queryByNoneRank(condition);
         }else {

@@ -162,11 +162,14 @@ public class PostController {
      * */
     @ResponseBody
     @RequestMapping(value = "/commitPost")
-    public BaseResponse<PostResponse> commitPost(PostParam postParam){
+    public BaseResponse<PostResponse> commitPost(@RequestParam("info") String json){
         BaseResponse<PostResponse> response = new BaseResponse<>();
         PostResponse postResponse = new PostResponse();
         try {
-
+            if("".equals(json) || "{}".equals(json)){
+                throw new MyException("没有收到数据");
+            }
+            PostParam postParam = new Gson().fromJson(json, PostParam.class);
             boolean b = userService.checkToken(postParam.getUserId(), postParam.getToken());
             if(b){
                 DataTablePost dataTablePost = new DataTablePost();

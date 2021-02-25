@@ -6,14 +6,14 @@
         <result property="userName" column="userName" jdbcType="VARCHAR"/>
         <result property="sign" column="userSign" jdbcType="VARCHAR"/>
         <result property="phoneNum" column="phoneNum" jdbcType="VARCHAR"/>
-        <result property="passWord" column="passWord" jdbcType="VARCHAR"/>
+        <result property="passWord" column="passw" jdbcType="VARCHAR"/>
         <result property="wbId" column="wbId" jdbcType="VARCHAR"/>
         <result property="headImgName" column="headImgName" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="INTEGER"/>
     </resultMap>
 
     <insert id="insert" parameterType="com.shay.aipets.dto.User">
-        insert into User(userName, userId, sex , passWord, wbId, phoneNum, userSign)
+        insert into User(userName, userId, sex , passw, wbId, phoneNum, userSign)
         values (#{userName}, #{userId}, #{sex}, #{passWord} , #{wbId}, #{phoneNum}, #{sign})
     </insert>
 
@@ -31,7 +31,7 @@
                 and userId = #{userId}
             </if>
             <if test="passWord != null">
-                and passWord = #{passWord}
+                and passw = #{passWord}
             </if>
 
             <if test="phoneNum != null">
@@ -81,7 +81,7 @@
                 and userId = #{userId}
             </if>
             <if test="passWord != null">
-                and passWord = #{passWord}
+                and passw = #{passWord}
             </if>
             <if test="phoneNum != null">
                 and phoneNum = #{phoneNum}
@@ -99,7 +99,7 @@
                 userName = #{userName},
             </if>
             <if test="passWord != null">
-                passWord = #{passWord},
+                passw = #{passWord},
             </if>
             <if test="sign != null">
                 userSign = #{sign},

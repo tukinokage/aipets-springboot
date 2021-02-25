@@ -86,6 +86,11 @@ public class PetController {
             Pet pet = new Pet();
             pet.setPetId(loadPetIntroductionCondition.getPetId());
             PetIntroduce petIntroduce = petService.getPetIntroduce(pet);
+            if(petIntroduce == null){
+                petIntroduce = new PetIntroduce();
+                petIntroduce.setPetAttention("没有相关信息");
+                petIntroduce.setPetStory("没有相关信息");
+            }
             new Thread(){
                 @Override
                 public void run() {

@@ -11,7 +11,6 @@ import com.shay.aipets.entity.params.*;
 import com.shay.aipets.entity.response.*;
 import com.shay.aipets.entity.responsedata.SetPwResponseData;
 import com.shay.aipets.entity.responses.*;
-import com.shay.aipets.mapper.DaillyRecordMapper;
 import com.shay.aipets.myexceptions.MyException;
 import com.shay.aipets.services.CommentService;
 import com.shay.aipets.services.DailyRecordService;
@@ -77,7 +76,13 @@ public class UserController {
         CheckIsStarResponse checkIsStarResponse = new CheckIsStarResponse();
         try {
             boolean starPet = userService.isStarPet(checkIsStarParam.getPetId(), checkIsStarParam.getUserId());
-            checkIsStarResponse.setStar(starPet);
+            if(starPet){
+                checkIsStarResponse.setIsStar(1);
+            }else {
+                checkIsStarResponse.setIsStar(0);
+            }
+
+            response.setData(checkIsStarResponse);
         } catch (MyException e){
             response.setErrorMsg(e.getMessage());
         } catch (Exception e){
@@ -277,7 +282,7 @@ public class UserController {
                 dailyRecord.setDRId(MD5CodeCeator.randomUUID());
                 boolean b = dailyRecordService.insertDailyRecord(dailyRecord);
                 if(b){
-                    response.setData(postDaliyResponse);
+                    //response.setData(postDaliyResponse);
                 }else {
                     throw new MyException("发布失败");
                 }

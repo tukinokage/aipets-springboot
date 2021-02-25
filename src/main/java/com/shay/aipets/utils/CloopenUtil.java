@@ -3,6 +3,7 @@ package com.shay.aipets.utils;
 import com.cloopen.rest.sdk.BodyType;
 import com.cloopen.rest.sdk.CCPRestSmsSDK;
 import com.google.gson.Gson;
+import com.shay.aipets.myexceptions.MyException;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class CloopenUtil {
 
     /**@Param phoneNum要接收的号码 code验证码 time分钟为单位
      * */
-    public static void send(String phoneNum, String code, String time){
+    public static void send(String phoneNum, String code, String time) throws MyException {
         String to = phoneNum;
 
         CCPRestSmsSDK sdk = new CCPRestSmsSDK();
@@ -48,7 +49,9 @@ public class CloopenUtil {
             }
         }else{
             //异常返回输出错误码和错误信息
+
             System.out.println("错误码=" + result.get("statusCode") +" 错误信息= "+result.get("statusMsg"));
+            throw new MyException("短信服务失效");
         }
     }
 }

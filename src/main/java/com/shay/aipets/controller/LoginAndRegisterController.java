@@ -80,7 +80,7 @@ public class LoginAndRegisterController {
         CheckPhoneRepData checkPhoneRepData = new CheckPhoneRepData();
         try {
           String phone = userService.getPhoneByPhoneToken(checkPhExistParam.getPhoneToken());
-           if(userService.isPhoneRg(checkPhExistParam.getPhoneToken())){
+           if(userService.isPhoneRg(phone)){
                checkPhoneRepData = userService.getUserByPhone(phone);
            }else {
               checkPhoneRepData = userService.regByPhone(phone);
@@ -98,7 +98,7 @@ public class LoginAndRegisterController {
 
      @ResponseBody
     @RequestMapping(value = "/test")
-    public BaseResponse<CheckPhoneRepData> loginByPhone(){
+    public BaseResponse<CheckPhoneRepData> loginByPhone() throws Exception{
          CloopenUtil cloopen = new CloopenUtil();
          cloopen.send("13049254754", "2233", "1");
          return new BaseResponse();

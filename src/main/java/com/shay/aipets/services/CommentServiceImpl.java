@@ -138,7 +138,9 @@ public class CommentServiceImpl implements CommentService {
             UserCommentItem userCommentItem = new UserCommentItem();
             Comment comment = queryList.get(i);
             String postId = queryList.get(i).getPostId();
-            Post post = postMapper.getPostListByPId(postId).get(0);
+
+            List<Post> postListByPId = postMapper.getPostListByPId(postId);
+            Post post = postListByPId.get(0);
             userCommentItem.setCommentId(comment.getCommentId());
             userCommentItem.setCommentText(comment.getContentText());
             userCommentItem.setDateTime(comment.getDateTime());
