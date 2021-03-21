@@ -145,6 +145,7 @@ public class PostController {
 
             response.setData(upLoadPicResponse);
         }catch (MyException e){
+            e.printStackTrace();
             response.setErrorMsg(e.getMessage());
         }catch (Exception e){
             e.printStackTrace();

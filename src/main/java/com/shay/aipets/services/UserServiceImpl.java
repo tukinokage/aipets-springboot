@@ -75,6 +75,7 @@ public class UserServiceImpl implements UserService {
 
             String oldToken = redisUtil.getString(id);
             if (oldToken != null && !oldToken.equals("")){
+                oldToken = oldToken.replace("\"", "");
                 redisUtil.del(oldToken);
             }
 
@@ -113,6 +114,7 @@ public class UserServiceImpl implements UserService {
         String id = redisUtil.getString(token);
         //更新存活时间
         if(id != null){
+            id = id.replace("\"", "");
             redisUtil.expire(token, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
             redisUtil.expire(id, AuthorizationInterceptor.TOKEN_EXPIRE_TIME);
         }else {
@@ -191,6 +193,7 @@ public class UserServiceImpl implements UserService {
 
             String oldToken = redisUtil.getString(id);
             if (oldToken != null && !oldToken.equals("")){
+                oldToken = oldToken.replace("\"", "");
                 redisUtil.del(oldToken);
             }
 
