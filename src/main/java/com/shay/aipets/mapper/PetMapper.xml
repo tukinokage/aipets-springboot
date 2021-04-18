@@ -112,6 +112,7 @@
                 group by petId) as c
              on a.petId = c.petId
         group by a.petId
+        order by viewNum DESC
         limit #{startNum}, #{endNum}
     </select>
 

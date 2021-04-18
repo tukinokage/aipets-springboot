@@ -63,8 +63,7 @@
 
     <!--查询信息-单个-多个-全部-->
     <select id="getPostListByPId"   resultMap="PostMap">
-        select
-          *
+        select *
         from post
         where postId = #{postId}
     </select>
@@ -77,7 +76,7 @@
         where postId = #{postId}
     </select>
 
-    <insert id="savePostPic" parameterType="com.shay.aipets.dto.PostPic"  >
+    <insert id="savePostPic" parameterType="com.shay.aipets.dto.PostPic" >
          insert into postpic(postId, picName)
         values (#{postId}, #{picName})
     </insert>
