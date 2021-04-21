@@ -36,7 +36,8 @@
             <if test="userId != null and userId != ''">
                 and userId = #{userId}
             </if>
-
+            order by dateTime
+            ASC
         </where>
     </select>
 
